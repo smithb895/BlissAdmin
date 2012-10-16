@@ -18,7 +18,7 @@ mysql_select_db($dbName) or die (mysql_error());
 			$logic = "OR";
 			
 //$query = "select * from profile where name Like 'R4Z0R49'";
-$query = "select profile.*, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id and name LIKE '%". str_replace(" ", "%' OR name LIKE '%", $good). "%' ORDER BY last_update DESC"; 
+$query = "select profile.*, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id and name LIKE '%". str_replace(" ", "%' OR name LIKE '%", $good). "%' ORDER BY last_updated DESC"; 
 $result = mysql_query($query) or die(mysql_error());
 $row = mysql_fetch_array($result);
 
