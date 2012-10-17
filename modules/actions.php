@@ -57,9 +57,12 @@ if (isset($_SESSION['user_id']))
 		}
 		if (isset($_GET["deletecheck"])){
 
-			$remquery = "Delete FROM survivor WHERE id='".$_GET["deletecheck"]."'";
+			$remquery = "delete from id using instance_deployable id join survivor s on id.owner_id = s.id where s.id = '".$_GET["deletecheck"]."'";
 			$result = mysql_query($remquery) or die(mysql_error());
 			$class = mysql_fetch_assoc($result);
+			$remquery1 = "Delete FROM survivor WHERE id='".$_GET["deletecheck"]."'";
+			$result1 = mysql_query($remquery1) or die(mysql_error());
+			$class1 = mysql_fetch_assoc($result1);
 			?>
 			<script type="text/javascript">
 				window.location = 'admin.php?view=check';

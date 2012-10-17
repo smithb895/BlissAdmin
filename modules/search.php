@@ -47,7 +47,7 @@ if (isset($_SESSION['user_id']))
 				case 'player':
 					$tableheader = header_player(0);
 					echo $tableheader;
-					$playerquery = "select profile.name, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id and name LIKE '%". str_replace(" ", "%' OR name LIKE '%", $good). "%' ORDER BY last_update DESC"; 
+					$playerquery = "select profile.name, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id and name LIKE '%". str_replace(" ", "%' OR name LIKE '%", $good). "%' ORDER BY last_updated DESC"; 
 					$result = mysql_query($playerquery) or die(mysql_error());
 					$tablerows = "";
 					while ($row=mysql_fetch_array($result)) {
@@ -58,7 +58,7 @@ if (isset($_SESSION['user_id']))
 				case 'item':
 					$tableheader = header_player(0);
 					echo $tableheader;
-					$query = "SELECT * from (SELECT profile.name, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id) as T where inventory LIKE '%". str_replace(" ", "%' OR backpack LIKE '%", $good). "%'"." ORDER BY last_update DESC";
+					$query = "SELECT * from (SELECT profile.name, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id) as T where inventory LIKE '%". str_replace(" ", "%' OR backpack LIKE '%", $good). "%'"." ORDER BY last_updated DESC";
 					$result = mysql_query($query) or die(mysql_error());
 					$tablerows = "";
 					while ($row=mysql_fetch_array($result)) {
@@ -70,7 +70,7 @@ if (isset($_SESSION['user_id']))
 					$chbox = "";
 					$tableheader = header_vehicle(0, $chbox);
 					echo $tableheader;
-					$query = "SELECT * FROM objects WHERE otype LIKE '%". str_replace(" ", "%' OR otype LIKE '%", $good). "%'";
+					$query = "select iv.id, v.class_name, 0 owner_id, iv.worldspace, iv.inventory, iv.instance_id, iv.parts, fuel, oc.type, damage from instance_vehicle iv inner join vehicle v on iv.vehicle_id = v.id inner join object_classes oc on v.class_name = oc.classname where v.class_name like '%". str_replace(" ", "%' OR otype LIKE '%", $good). "%'";
 					$res = mysql_query($query) or die(mysql_error());
 					$chbox = "";
 					while ($row=mysql_fetch_array($res)) {
@@ -82,7 +82,7 @@ if (isset($_SESSION['user_id']))
 					$chbox = "";
 					$tableheader = header_vehicle(0, $chbox);
 					echo $tableheader;
-					$query = "SELECT * FROM objects WHERE inventory LIKE '%". str_replace(" ", "%' OR inventory LIKE '%", $good). "%'";
+					$query = "select * from instance_deployable id inner join deployable d on id.deployable_id = d.id inner join object_classes oc on d.class_name = oc.classname where d.class_name = 'TentStorage' and id.inventory Like '%". str_replace(" ", "%' OR id.inventory LIKE '%", $good). "%'";
 					$chbox = "";
 					while ($row=mysql_fetch_array($res)) {
 							$tablerows .= row_vehicle($row, $chbox);
