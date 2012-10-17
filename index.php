@@ -66,7 +66,8 @@ mysql_select_db($dbName) or die (mysql_error());
 						$totalVehicles = mysql_query("SELECT count(*) FROM instance_vehicle WHERE instance_id = " . $iid);
 						$num_totalVehicles = mysql_fetch_array($totalVehicles);
 						
-						$Played24h = mysql_query("SELECT count(*) from survivor WHERE last_updated > now() - INTERVAL 1 DAY");
+						//$Played24h = mysql_query("SELECT count(*) from survivor WHERE last_updated > now() - INTERVAL 1 DAY");
+						$Played24h = mysql_query("select count(*) from (SELECT count(*) from survivor WHERE last_updated > now() - INTERVAL 1 DAY group by unique_id) uniqueplayers");
 						$num_Played24h = mysql_fetch_array($Played24h);
 					}
 					
