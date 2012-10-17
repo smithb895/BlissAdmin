@@ -82,7 +82,7 @@ if (isset($_SESSION['user_id']))
 					$chbox = "";
 					$tableheader = header_vehicle(0, $chbox);
 					echo $tableheader;
-					$query = "select * from instance_deployable id inner join deployable d on id.deployable_id = d.id inner join object_classes oc on d.class_name = oc.classname where d.class_name = 'TentStorage' and id.inventory Like '%". str_replace(" ", "%' OR inventory LIKE '%", $good). "%'";
+					$query = "select * from instance_deployable id inner join deployable d on id.deployable_id = d.id inner join object_classes oc on d.class_name = oc.classname where d.class_name = 'TentStorage' and id.inventory Like '%". str_replace(" ", "%' OR id.inventory LIKE '%", $good). "%'";
 					$chbox = "";
 					while ($row=mysql_fetch_array($res)) {
 							$tablerows .= row_vehicle($row, $chbox);
