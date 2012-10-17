@@ -42,25 +42,16 @@ $quicklinks = XML2Array::createArray($xml);
 		<!--  start content-table-inner ...................................................................... START -->
 		<table border="0" width="100%" cellpadding="0" cellspacing="0" id="product-table">
 			<tr>
-				<th class="table-header-repeat line-left minwidth-1"><a href="">Quick links</a>	</th>
+				<th class="table-header-repeat line-left minwidth-1"><a href="">Say to global chat</a>	</th>
 				<th class="table-header-repeat line-left minwidth-1"><a href="">Actions log</a></th>
 			</tr>
 			<tr>
 				<td align="center" width="50%">
 					<div id="quicklinks">
 						<ul>
-						<?php foreach ($quicklinks['quicklinks'] as $ql) : ?>
-							<?php if ($ql != null) : ?>
-							<li>
-								<a href="<?php echo $ql['Link']; ?>" style="color: #000;">
-									<span class="quicklink-box">
-										<img src="<?php echo $path;?>images/icons/<?php echo $ql['Icon']; ?>" alt="<?php echo $ql['Name']; ?>" /><br />
-										<strong><?php echo $ql['Name']; ?></strong>
-									</span>
-								</a>
-							</li>
-							<?php endif; ?>
-						<?php endforeach; ?>
+					<?php
+						include ('say.php');
+					?>
 						</ul>
 					</div>
 				</td>
@@ -68,15 +59,6 @@ $quicklinks = XML2Array::createArray($xml);
 					<textarea cols="68" rows="12" readonly><?php echo $logs; ?></textarea>
 				</td>	
 			</tr>				
-		</table>	
-		<table border="0" width="100%" cellpadding="0" cellspacing="0">
-			<tr>
-				<td width="100%">	
-					<?php
-						include ('say.php');
-					?>
-				</td>
-			</tr>
 		</table>		
 		<!--  end content-table-inner ............................................END  -->
 		</div>
