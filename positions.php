@@ -327,10 +327,10 @@ where
 		$y = 0;
 		if(array_key_exists(2,$Worldspace)){$x = $Worldspace[2];}
 		if(array_key_exists(1,$Worldspace)){$y = $Worldspace[1];}
-		$description = "<h2><a href=\"admin.php?view=info&show=4&id=".$row['id']."\">".$row['class_name']."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/vehicles/".$row['class_name'].".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \"><h2>Position:</h2>left:".round(($y/100))." top:".round(((15360-$x)/100))."</td></td></tr></table>";
-
+		$description = "<h2>".$row['class_name']."</h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/vehicles/".$row['class_name'].".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \"><h2>Position:</h2>left:".round(($y/100))." top:".round(((15360-$x)/100))."</td></td></tr></table>";
+		$position= " Position:left:".round(($y/100))." top:".round(((15360-$x)/100))."";
 		$output[] = array(
-			$row['class_name'] . ', ' . $row['id'],
+			$row['class_name'] . ', ' . $row['id'] . ', ' . $position,
 			$description,
 			trim($y),
 			trim($x) + 1024,
