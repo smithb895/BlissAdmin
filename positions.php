@@ -280,7 +280,13 @@ $sql = "select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.sur
   s.id,
   p.name class_name,
   'Player' as type,
-  s.worldspace
+  s.worldspace,
+  s.model,
+  s.unique_id,
+  s.zombie_kills,
+  s.bandit_kills,
+  s.survivor_kills,
+  s.survival_time
 from
   profile p
   join survivor s on p.unique_id = s.unique_id
@@ -294,7 +300,13 @@ select
   iv.id,
   v.class_name,
   oc.type,
-  iv.worldspace
+  iv.worldspace,
+  'none' as model,
+  'none' as unique_id,
+  'none' as zombie_kills,
+  'none' as bandit_kills,
+  'none' as survivor_kills,
+  'none' as survival_time
 from
   instance_vehicle iv
   join vehicle v on iv.vehicle_id = v.id
@@ -305,7 +317,13 @@ select
   id.id,
   d.class_name,
   oc.type,
-  id.worldspace
+  id.worldspace,
+  'none' as model,
+  'none' as unique_id,
+  'none' as zombie_kills,
+  'none' as bandit_kills,
+  'none' as survivor_kills,
+  'none' as survival_time
 from
   instance_deployable id
   join deployable d on id.deployable_id = d.id
@@ -327,10 +345,28 @@ where
 		$y = 0;
 		if(array_key_exists(2,$Worldspace)){$x = $Worldspace[2];}
 		if(array_key_exists(1,$Worldspace)){$y = $Worldspace[1];}
-		$description = "<h2>".$row['class_name']."</h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/vehicles/".$row['class_name'].".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \"><h2>Position:</h2>left:".round(($y/100))." top:".round(((15360-$x)/100))."</td></td></tr></table>";
 		$position= " Position:left:".round(($y/100))." top:".round(((15360-$x)/100))."";
+		$id = $row['id'];
+		$model = $row['model'];
+		$uid = $row['unique_id'];
+		$KillsZ = $row['zombie_kills'];
+		$KillsB = $row['bandit_kills'];
+		$KillS = $row['survivor_kills'];
+		$Duration = $row['survival_time'];
+		
+		if($row['type'] == 'Player') 
+		{ 
+		$hover = $row['class_name'] . ', ' . $row['id'] . ', ' . $row['model'] . ', Alive Duration:' . $row['survival_time'];
+		$description = "<h2><a href=\"admin.php?view=info&show=1&id=".$uid."\">".htmlspecialchars($row['class_name'], ENT_QUOTES)." - ".$row['id']."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/models/".str_replace('"', '', $model).".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \">Position:left:".round(($y/100))." top:".round(((15360-$x)/100))."<p>PlayerID: ".$id."<p>CharatcerID: ".$uid."<p>Zed Kills: ".$KillsZ."<p>Bandit Kills: ".$KillsB."<p>Alive Duration: ".$Duration."<p></td></table>";
+
+		} else {
+		$hover = $row['class_name'] . ', ' . $row['id'];
+		$description = "<h2><a href=\"admin.php?view=info&show=4&id=".$row['id']."\">".$row['class_name']."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/vehicles/".$row['class_name'].".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \"><h2>Position:</h2>left:".round(($y/100))." top:".round(((15360-$x)/100))."</td></td></tr></table>";
+
+		}
+		
 		$output[] = array(
-			$row['class_name'] . ', ' . $row['id'] . ', ' . $position,
+			$hover,
 			$description,
 			trim($y),
 			trim($x) + 1024,
