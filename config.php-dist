@@ -8,8 +8,11 @@
 	$password = "dayz"; //database password
 	$dbName = "dayz"; //database name
 	$sitename = "DayZ Administration"; //Admin panel name
-	$map = "chernarus"; // chernarus or lingor
+	$map = "chernarus"; // chernarus or lingor or fallujah or namalsk or takistan or panthera
 	$world = "1"; // 1= cherno, 2= lingor, 3= utes, 4= takistan, 5= panthera2
+	
+	//security
+	$security = "admin"; // allows you to rename the admin.php file to secure your install **Not Active Yet**
 
 	
 	//Social Media
