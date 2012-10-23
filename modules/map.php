@@ -345,6 +345,6 @@ if (isset($_SESSION['user_id']))
 }
 else
 {
-	header('Location: admin.php');
+	header('Location:' .$security.'.php');
 }
 ?>
