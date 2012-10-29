@@ -1,6 +1,7 @@
 <?php
 	$iid = "1"; //Instance ID
 	$serverip = "127.0.0.1";  //game-server host
+	$extserverip = "216.244.82.122";
 	$rconpassword = "123456"; //rcon password
 	$serverport = 2302; //server port
 	$hostname = "127.0.0.1";  //Database host

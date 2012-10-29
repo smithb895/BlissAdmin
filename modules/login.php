@@ -32,7 +32,7 @@ if (!empty($_POST))
 		// делаем запрос к БД
 		// и ищем юзера с таким логином и паролем
 
-		$query = "SELECT `id`
+		$query = "SELECT `id`,`tier`
 					FROM `users`
 					WHERE `login`='{$login}' AND `password`='{$password}'
 					LIMIT 1";
@@ -46,6 +46,7 @@ if (!empty($_POST))
 			$row = mysql_fetch_assoc($sql);
 			$_SESSION['user_id'] = $row['id'];
 			$_SESSION['login'] = $login;
+			$_SESSION['tier'] = $row['tier'];
 			// если пользователь решил "запомнить себя"
 			// то ставим ему в куку логин с хешем пароля
 			

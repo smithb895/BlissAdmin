@@ -3,13 +3,20 @@
 session_start();
 include ('config.php');
 
-mysql_connect($hostname, $username, $password) or die (mysql_error());
-mysql_select_db($dbName) or die (mysql_error());
+//mysql_connect($hostname, $username, $password) or die (mysql_error());
+//mysql_select_db($dbName) or die (mysql_error());
+try  {
+	$dbhandle = new PDO("mysql:host=$hostname;dbname=$dbName", $username, $password);
+} catch (PDOException $e) {
+	return "There was an error connecting to the database.  Check your config file.";
+}
 
 if (isset($_GET['logout']))
 {
-	$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('LOGOUT','{$_SESSION['login']}',NOW())";
-	$sql2 = mysql_query($query) or die(mysql_error());
+	//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('LOGOUT','{$_SESSION['login']}',NOW())";
+	//$sql2 = mysql_query($query) or die(mysql_error());
+	$query = $dbhandle->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('LOGOUT',?,NOW())");
+	$query->execute(array($_SESSION['login']));
 	
 	if (isset($_SESSION['user_id']))
 		unset($_SESSION['user_id']);

@@ -1,6 +1,7 @@
 <?php
 if (isset($_SESSION['user_id']))
 {
+	if ($_SESSION['tier'] == 1) {
 	$pagetitle = "Manage admins";
 	$delresult = "";
 	if (isset($_POST["user"])){
@@ -122,9 +123,13 @@ if (isset($_SESSION['user_id']))
 	</table>
 	<div class="clear">&nbsp;</div>
 <?php
-}
-else
-{
+	} else {
+		echo '
+		<div id="page-heading">
+			<h1>Access Denied</h1>
+		</div>';
+	}
+} else {
 	header('Location: admin.php');
 }
 ?>

@@ -5,13 +5,21 @@
 session_start();
 include ('config.php');
 
-mysql_connect($hostname, $username, $password) or die (mysql_error());
-mysql_select_db($dbName) or die (mysql_error());
+//mysql_connect($hostname, $username, $password) or die (mysql_error());
+//mysql_select_db($dbName) or die (mysql_error());
+try  {
+	$dbhandle = new PDO("mysql:host=$hostname;dbname=$dbName", $username, $password);
+} catch (PDOException $e) {
+	return "There was an error connecting to the database.  Check your config file.";
+}
 
-				    $query = "SELECT * FROM survivor";
-				    $res = mysql_query($query) or die(mysql_error());	
+				    //$query = "SELECT * FROM survivor";
+				    //$res = mysql_query($query) or die(mysql_error());
+					$sth = $dbhandle->query("SELECT * FROM survivor");
+					$res = $sth->fetchAll();
 					//KillsZ
-					if (mysql_num_rows($res) > 0) {
+					//if (mysql_num_rows($res) > 0) {
+					if($res > 0) {
 						//KillsZ
 						$KillsZ = array (); // initialize 
 						//KillsB
@@ -22,7 +30,8 @@ mysql_select_db($dbName) or die (mysql_error());
 						$Alive = array (); // initialize
 						//HeadshotsZ
 						$HeadshotsZ = array (); // initialize
-						while ($row=mysql_fetch_array($res))
+						//while ($row=mysql_fetch_array($res))
+						foreach ($res as $row)
 						{
 							//KillsZ
 							$KillsZ[] = $row['zombie_kills']; // sum 
@@ -40,8 +49,9 @@ mysql_select_db($dbName) or die (mysql_error());
 						}
 						//Alive
 						//$Alive[] = $row['is_dead']; // sum 
-						$Alive = mysql_query("SELECT count(*) FROM survivor WHERE is_dead=0");
-						$totalAlive = mysql_fetch_array($Alive);
+						//$Alive = mysql_query("SELECT count(*) FROM survivor WHERE is_dead=0");
+						//$totalAlive = mysql_fetch_array($Alive);
+						$totalAlive = $dbhandle->query("SELECT count(*) FROM survivor WHERE is_dead=0")->fetchColumn();
 						//KillsZ
 						$KillsZ = array_sum($KillsZ);
 						//KillsB
@@ -49,26 +59,33 @@ mysql_select_db($dbName) or die (mysql_error());
 						//KillsH
 						$KillsH = array_sum($KillsH);
 						//Alive
-						$Alive = array_sum($Alive);
+						//$Alive = array_sum($Alive);   <- wat is this used for? -Anzu
 						//HeadshotsZ
 						$HeadshotsZ = array_sum($HeadshotsZ);
 						
-						$totalplayers= mysql_query("SELECT count(*) FROM profile");
-						$num_totalplayers = mysql_fetch_array($totalplayers);
+						//$totalplayers= mysql_query("SELECT count(*) FROM profile");
+						//$num_totalplayers = mysql_fetch_array($totalplayers);
+						//$totalplayers= mysql_query("SELECT count(*) FROM profile");
+						//$num_totalplayers = mysql_fetch_array($totalplayers);
+						$num_totalplayers = $dbhandle->query("SELECT count(*) FROM profile")->fetchColumn();
 						
-						$playerdeaths = mysql_query("SELECT count(*) FROM survivor WHERE is_dead=1");
+						//$playerdeaths = mysql_query("SELECT count(*) FROM survivor WHERE is_dead=1");
 						//$num_deaths = mysql_num_rows($playerdeaths);
-						$num_deaths = mysql_fetch_array($playerdeaths);
+						//$num_deaths = mysql_fetch_array($playerdeaths);
+						$num_deaths = $dbhandle->query("SELECT count(*) FROM survivor WHERE is_dead=1")->fetchColumn();
 						
-						$alivebandits = mysql_query("SELECT count(*) FROM survivor WHERE is_dead=0 And Model like 'Bandit1_DZ'");
-						$num_alivebandits = mysql_fetch_array($alivebandits);
+						//$alivebandits = mysql_query("SELECT count(*) FROM survivor WHERE is_dead=0 And Model like 'Bandit1_DZ'");
+						//$num_alivebandits = mysql_fetch_array($alivebandits);
+						$num_alivebandits = $dbhandle->query("SELECT count(*) FROM survivor WHERE is_dead=0 And Model like 'Bandit1_DZ'")->fetchColumn();
 						
-						$totalVehicles = mysql_query("SELECT count(*) FROM instance_vehicle WHERE instance_id = " . $iid);
-						$num_totalVehicles = mysql_fetch_array($totalVehicles);
+						//$totalVehicles = mysql_query("SELECT count(*) FROM instance_vehicle WHERE instance_id = " . $iid);
+						//$num_totalVehicles = mysql_fetch_array($totalVehicles);
+						$num_totalVehicles = $dbhandle->query("SELECT count(*) FROM instance_vehicle WHERE instance_id = " . $iid)->fetchColumn();
 						
 						//$Played24h = mysql_query("SELECT count(*) from survivor WHERE last_updated > now() - INTERVAL 1 DAY");
-						$Played24h = mysql_query("select count(*) from (SELECT count(*) from survivor WHERE last_updated > now() - INTERVAL 1 DAY group by unique_id) uniqueplayers");
-						$num_Played24h = mysql_fetch_array($Played24h);
+						//$Played24h = mysql_query("select count(*) from (SELECT count(*) from survivor WHERE last_updated > now() - INTERVAL 1 DAY group by unique_id) uniqueplayers");
+						//$num_Played24h = mysql_fetch_array($Played24h);
+						$num_Played24h = $dbhandle->query("select count(*) from (SELECT count(*) from survivor WHERE last_updated > now() - INTERVAL 1 DAY group by unique_id) uniqueplayers")->fetchColumn();
 					}
 					
 					//$KillsB = $rowid['KillsB'];
@@ -100,7 +117,7 @@ $(document).pngFix( );
 	</div>
 	<div class="clear"></div>		
 	
-	<a href="http://www.gametracker.com/server_info/<?php echo $serverip?>:<?php echo $serverport?>/" target="_blank"><img src="http://cache.www.gametracker.com/server_info/<?php echo $serverip?>:<?php echo $serverport?>/b_560_95_1.png" border="0" width="560" height="95" alt=""/></a>
+	<a href="http://www.gametracker.com/server_info/<?php echo $extserverip?>:<?php echo $serverport?>/" target="_blank"><img src="http://cache.www.gametracker.com/server_info/<?php echo $extserverip?>:<?php echo $serverport?>/b_560_95_1.png" border="0" width="560" height="95" alt=""/></a>
 	
 		<div id="statsbox">	
 			<div id="login-inner">

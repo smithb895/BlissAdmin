@@ -648,6 +648,42 @@
     </sUZI_EP1>
     <sWinchester1866>
         <Type>rifle</Type>
-        <Slots>1</Slots>
+        <Slots>10</Slots>
     </sWinchester1866>
+	<sAK_107_GL_pso>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sAK_107_GL_pso>
+	<sPecheneg>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sPecheneg>
+	<s100Rnd_762x54_PK>
+		<Type>heavyammo</Type>
+		<Slots>2</Slots>
+	</s100Rnd_762x54_PK>
+	<sHandGrenade_Stone>
+		<Type>heavyammo</Type>
+		<Slots>1</Slots>
+	</sHandGrenade_Stone>
+	<sItemFlashlightReduse>
+		<Type>pistol</Type>
+		<Slots>1</Slots>
+	</sItemFlashlightReduse>
+	<sM4A1_RCO_GL>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sM4A1_RCO_GL>
+	<sM4A3_RCO_GL_EP1>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sM4A3_RCO_GL_EP1>
+	<sM16A4_ACG_GL>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sM16A4_ACG_GL>
+	<M4A1_HWS_GL_SD_Camo>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</M4A1_HWS_GL_SD_Camo>
 </items>

@@ -47,7 +47,7 @@ if (isset($_SESSION['user_id']))
 			<div class="table">
 				<ul class="select menutop level1">
 				<li class="li-dashboard root active"><a href="admin.php" style="color:#FFF;" class="dashboard item">Dashboard</a></li>
-				<li class="li-users parent root"><span class=" daddy item"><span>Control</span></span>
+				<li class="li-users parent root"><span class=" daddy item"><span>Admin</span></span>
 					<ul class="level2 parent-users">
 						<li class="li-mass-mail-users"><a href="admin.php?view=vip" class="class:massmail item">Manage VIPs</a></li>
 						<li class="li-mass-mail-users"><a href="admin.php?view=admin" class="class:massmail item">Manage admins</a></li>
@@ -55,7 +55,7 @@ if (isset($_SESSION['user_id']))
 						<li class="li-mass-mail-users"><a href="admin.php?view=database" class="class:massmail item">Database Admin</a></li>
 					</ul>
 				</li>
-				<li class="li-users parent root"><span class=" daddy item"><span>Entities</span></span>
+				<li class="li-users parent root"><span class=" daddy item"><span>View Inventories</span></span>
 					<ul class="level2 parent-users">
 					<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Instance ID:<?php echo $iid?></a>
 						<ul class="level3 parent-user-manager">
@@ -93,6 +93,7 @@ if (isset($_SESSION['user_id']))
 						<li class="li-mass-mail-users"><a href="admin.php?view=search" class="class:massmail item">Search</a></li>
 					</ul>
 				</li>
+				<li class="li-dashboard root active"><a href="_gear/index.php" style="color:#FFF;" class="dashboard item">Gear &amp; Pos</a></li>
 				<?php if ($map == "chernarus") { ?>
 				<li class="li-users parent root"><span class=" daddy item"><span>Chern</span></span>
 					<ul class="level2 parent-users">
@@ -130,7 +131,7 @@ if (isset($_SESSION['user_id']))
 				</ul>
 				<?php } ?>
 				<?php if ($map == "lingor") { ?>
-				<li class="li-users parent root"><span class=" daddy item"><span>Lingor</span></span>
+				<li class="li-users parent root"><span class=" daddy item"><span>Maps</span></span>
 					<ul class="level2 parent-users">
 						<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Instance ID:<?php echo $iid?></a>
 							<ul class="level3 parent-user-manager">
@@ -138,7 +139,7 @@ if (isset($_SESSION['user_id']))
 								<ul class="level3 parent-groups">
 									<li class="li-add-new-user"><a href="admin.php?view=lingormap&show=0" class="class:newarticle item">Within 1 Min</a></li>
 								</ul>					
-						<li class="li-groups parent"><a href="#nogo" class="class:groups daddy item">Deployables</a>
+						<li class="li-groups parent"><a href="#nogo" class="class:groups daddy item">Objects</a>
 							<ul class="level3 parent-groups">
 								<li class="li-add-new-group"><a href="admin.php?view=lingormap&show=4" class="class:newarticle item">Vehicles Ingame</a></li>
 								<li class="li-add-new-group"><a href="admin.php?view=lingormap&show=6" class="class:newarticle item">All Ingame Tents</a></li>
@@ -156,13 +157,14 @@ if (isset($_SESSION['user_id']))
 								<li class="li-add-new-user"><a href="admin.php?view=lingormap&show=2" class="class:newarticle item">Dead</a></li>
 								<li class="li-add-new-user"><a href="admin.php?view=lingormap&show=3" class="class:newarticle item">All</a></li>
 							</ul>
-							<li class="li-groups parent"><a href="#nogo" class="class:groups daddy item">Deployables</a>
+							<li class="li-groups parent"><a href="#nogo" class="class:groups daddy item">Objects</a>
 							<ul class="level3 parent-groups">
 								<li class="li-add-new-group"><a href="admin.php?view=lingormap&show=5" class="class:newarticle item">Spawn locations</a></li>
 							
 							</ul>
 						</li>
 				</li>
+				
 <?php } ?>
 				<div class="clear"></div>
 			</div>

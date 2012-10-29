@@ -112,6 +112,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` varchar(32) NOT NULL DEFAULT '',
   `salt` char(3) NOT NULL DEFAULT '',
   `lastlogin` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `tier` smallint(2) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `login` (`login`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
@@ -120,8 +121,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Дамп данных таблицы `users`
 --
 
-INSERT INTO `users` (`id`, `login`, `password`, `salt`, `lastlogin`) VALUES
-(1, 'admin', 'e818f0d38a7dadb1ec1d839d46e0b5ca', '5yu', NULL);
+INSERT INTO `users` (`id`, `login`, `password`, `salt`, `lastlogin`, `tier`) VALUES
+(1, 'admin', 'e818f0d38a7dadb1ec1d839d46e0b5ca', '5yu', NULL, 1);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

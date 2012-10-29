@@ -1,26 +1,34 @@
 <?php
 include ('config.php');
 
-	if (isset($_POST['search'])){
-		$pagetitle = "Stats for ".$_POST['search'];
-	} else {
-		$pagetitle = "New search";
-	}
+if (isset($_POST['search'])){
+	$pagetitle = "Stats for ".$_POST['search'];
+} else {
+	$pagetitle = "New search";
+}
 
-mysql_connect($hostname, $username, $password) or die (mysql_error());
-mysql_select_db($dbName) or die (mysql_error());
+//mysql_connect($hostname, $username, $password) or die (mysql_error());
+//mysql_select_db($dbName) or die (mysql_error());
+try  {
+	$dbhandle = new PDO("mysql:host=$hostname;dbname=$dbName", $username, $password);
+} catch (PDOException $e) {
+	return "There was an error connecting to the database.  Check your config file.";
+}
 
-			echo $_POST["search"]."<br />".$_POST['type']."<br />";
-			$search = substr($_POST['search'], 0, 64);
-			$search = preg_replace("/[^\w\x7F-\xFF\s]/", " ", $search);
-			$good = trim(preg_replace("/\s(\S{1,2})\s/", " ", preg_replace("[ +]", "  "," $search ")));
-			$good = preg_replace("[ +]", " ", $good);
-			$logic = "OR";
+echo $_POST["search"]."<br />".$_POST['type']."<br />";
+$search = substr($_POST['search'], 0, 64);
+$search = preg_replace("/[^\w\x7F-\xFF\s]/", " ", $search);
+$good = trim(preg_replace("/\s(\S{1,2})\s/", " ", preg_replace("[ +]", "  "," $search ")));
+$good = preg_replace("[ +]", " ", $good);
+$logic = "OR";
 			
 //$query = "select * from profile where name Like 'R4Z0R49'";
 $query = "select profile.*, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id and name LIKE '%". str_replace(" ", "%' OR name LIKE '%", $good). "%' ORDER BY last_updated DESC"; 
-$result = mysql_query($query) or die(mysql_error());
-$row = mysql_fetch_array($result);
+//$result = mysql_query($query) or die(mysql_error());
+//$row = mysql_fetch_array($result);
+$result = $dbhandle->query($query);
+$row = $result->fetch();
+
 
 $id = $row['id'];
 
