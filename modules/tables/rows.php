@@ -188,7 +188,8 @@ function row_online_player($row, $player){
 			$curitem = $Backpack[$p];
 			if (is_array($curitem)){
 				if ($p != 0){
-					$curitem = $Backpack[$p][0]; $pcount = ' - '.$Backpack[$p][1].' rounds';
+					$curitem = $Backpack[$p][0];
+					$pcount = ' - '.$Backpack[$p][1].' rounds';
 				}
 			}
 			$BackpackPreview .= '<div class="preview_gear_slot" style="margin-top:0px;width:47px;height:47px;"><img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$curitem.'.png" title="'.$curitem.$pcount.'" alt="'.$curitem.$pcount.'"/></div>';

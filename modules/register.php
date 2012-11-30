@@ -6,11 +6,14 @@ if (isset($_SESSION['user_id']))
 		** Функция для генерации соли, используемоей в хешировании пароля
 		** возращает 3 случайных символа
 		*/
-
-		function GenerateSalt($n=3)
+		//mysql_connect($adminsdb_address, $adminsdb_user, $adminsdb_pass) or die (mysql_error());
+		//mysql_select_db($adminsdb_db) or die (mysql_error());
+		$dbhandle2 = new PDO("mysql:host=$adminsdb_address;dbname=$adminsdb_db", $adminsdb_user, $adminsdb_pass);
+		
+		function GenerateSalt($n=64)
 		{
 			$key = '';
-			$pattern = '1234567890abcdefghijklmnopqrstuvwxyz.,*_-=+';
+			$pattern = '1234567890abcdefghijklmnopqrstuvwxyz.,*_-=+$&';
 			$counter = strlen($pattern)-1;
 			for($i=0; $i<$n; $i++)
 			{
@@ -42,7 +45,7 @@ if (isset($_SESSION['user_id']))
 					<!--  start table-content  -->
 					
 					<div id="table-content">
-						<h2>Enter login and password for new admin</h2>
+						<h2>Enter info for new admin</h2>
 						
 						<form id="regform" action="admin.php?view=register">
 						
@@ -138,16 +141,22 @@ if (isset($_SESSION['user_id']))
 			}
 			
 			// проверяем, если юзер в таблице с таким же логином
+			/*
 			$query = "SELECT `id`
-						FROM `users`
-						WHERE `login`='{$login}'
+						FROM `hive_admins`
+						WHERE `hive_user`='{$login}'
 						LIMIT 1";
 			$sql = mysql_query($query) or die(mysql_error());
-			if (mysql_num_rows($sql)==1)
-			{
-				$error = true;
-				$errort .= 'Login already used.<br />';
-			}
+			*/
+			$query = $dbhandle2->prepare("SELECT `id` FROM `hive_admins` WHERE `hive_user`=? LIMIT 1");
+			$query->execute(array($login));
+			$row = $query->fetch(PDO::FETCH_ASSOC);
+			//if (mysql_num_rows($sql)==1)
+			//if (count($row) == 1)
+			//{
+			//	$error = true;
+			//	$errort .= 'Login already used.<br />';
+			//}
 			
 			// если ошибок нет, то добавляем юзаре в таблицу
 			if (!$error)
@@ -155,18 +164,28 @@ if (isset($_SESSION['user_id']))
 				// генерируем соль и пароль
 				
 				$salt = GenerateSalt();
-				$hashed_password = md5(md5($password) . $salt);
-				
+				$salt2 = GenerateSalt();
+				//$hashed_password = md5(md5($password) . $salt);
+				$hashed_password = hash('sha512', $salt.$password.$salt2);
+				/*
 				$query = "INSERT
-							INTO `users`
+							INTO `hive_admins`
 							SET
-								`login`='{$login}',
-								`password`='{$hashed_password}',
-								`salt`='{$salt}'";
+								`hive_user`='{$login}',
+								`hive_password`='{$hashed_password}',
+								`salt`='{$salt}',
+								`salt2`='{$salt2}',
+								`tier`=2";
 				$sql = mysql_query($query) or die(mysql_error());
+				*/
+				$query = $dbhandle2->prepare("INSERT INTO `hive_admins` SET `hive_user`=?,`hive_password`=?,`salt`=?,`salt2`=?,`tier`=2");
+				$query->execute(array($login,$hashed_password,$salt,$salt2));
 
-				$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('REGISTER ADMIN: {$login}','{$_SESSION['login']}',NOW())";
-				$sql2 = mysql_query($query) or die(mysql_error());
+				//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('REGISTER ADMIN: {$login}','{$_SESSION['login']}',NOW())";
+				//$sql2 = mysql_query($query) or die(mysql_error());
+				
+				$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('REGISTER ADMIN: ?',?,NOW())");
+				$query->execute(array($login,$_SESSION['login']));
 				?>
 				<!--  start message-green -->
 				<div id="msg">
@@ -201,6 +220,7 @@ if (isset($_SESSION['user_id']))
 			}
 
 		}
+		//mysql_close();
 	} else {
 		header('Location: admin.php');
 	}

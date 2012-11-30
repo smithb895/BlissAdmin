@@ -1,32 +1,56 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors',1);
+
 session_start();
-include ('config.php');
+include_once('config.php');
+include_once('modules/hive_connect.php');
+
+global $iid;
+global $serverip;
+global $serverport;
+global $rconpassword;
+global $map;
+global $world;
 
 //mysql_connect($hostname, $username, $password) or die (mysql_error());
 //mysql_select_db($dbName) or die (mysql_error());
-try  {
-	$dbhandle = new PDO("mysql:host=$hostname;dbname=$dbName", $username, $password);
-} catch (PDOException $e) {
-	return "There was an error connecting to the database.  Check your config file.";
-}
 
 if (isset($_SESSION['user_id'])) {
-	if (!isset($_GET['type'])) {
+	if (isset($_GET['instance_id'])) {
+		$_current_instance = preg_replace('#[^0-9+]#', '', $_GET['instance_id']);
+		foreach ($DayZ_Servers as $server) {
+			$_serveriid = $server->getMissionInstance();
+			if ($_current_instance == $_serveriid) {
+				$iid = $server->getMissionInstance();
+				$serverip = $server->getServerIP();
+				$serverport = $server->getServerPort();
+				$rconpassword = $server->getRconPassword();
+				$map = $server->getServerMap();
+				$world = $server->getWorldID();
+			}
+		}
+	}
+	if (isset($_GET['type'])) {
+		$pos_type = preg_replace('#[^0-9]#', '', $_GET['type']);
+	} else {
 		die("[]");
 	}
 
-	switch($_GET['type']) {
+	switch($pos_type) {
 		case 0:
 			//$sql = "select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, '" . $iid . "' as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id where s.is_dead = 0 and last_updated > now() - interval 1 minute";
-			$query = $dbhandle->prepare("select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, ? as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id where s.is_dead = 0 and last_updated > now() - interval 1 minute");
-			$result = $query->execute(array($iid));
 			//$result = mysql_query($sql);
-			//$result = $dbhandle->query($sql);
+			//$sql = "select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, ? as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id where s.is_dead = 0 and last_updated > now() - interval 1 minute";
+			//$query = $dbhandle->prepare("select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, ? as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id where s.is_dead = 0 and last_updated > now() - interval 1 minute");
+			$query = $dbhandle->prepare("select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, ? as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id join instance i on i.id = ? where s.is_dead = 0 and s.world_id = i.world_id and last_updated > now() - interval 2 minute");
+			$query->execute(array($iid,$iid));
+			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();
 			//for ($i = 0; $i < mysql_num_rows($result); $i++) {
-			for ($i = 0; $i < array_count($result); $i++) {
+			for ($i=0; $i < count($result); $i++) {
 				//$row = mysql_fetch_assoc($result);
-				$row = $result->fetch();
+				$row = $result[$i];
 
 				$Worldspace = str_replace("[", "", $row['worldspace']);
 				$Worldspace = str_replace("]", "", $Worldspace);
@@ -57,18 +81,19 @@ if (isset($_SESSION['user_id'])) {
 					$icon
 				);
 			}
-			echo json_encode($output);	
-			break;
+				echo json_encode($output);	
+				break;
 		case 1:
 			//$sql = "select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, '" . $iid . "' as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id where s.is_dead = 0 and last_updated > now() - interval 24 hour";
 			//$result = mysql_query($sql);
 			$query = $dbhandle->prepare("select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, ? as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id where s.is_dead = 0 and last_updated > now() - interval 24 hour");
-			$result = $query->execute(array($iid));
+			$query->execute(array($iid));
+			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();
 			//for ($i = 0; $i < mysql_num_rows($result); $i++) {
-			for ($i = 0; $i < array_count($result); $i++) {
+			for ($i = 0; $i < count($result); $i++) {
 				//$row = mysql_fetch_assoc($result);
-				$row = $result->fetch();
+				$row = $result[$i];
 
 				$Worldspace = str_replace("[", "", $row['worldspace']);
 				$Worldspace = str_replace("]", "", $Worldspace);
@@ -99,18 +124,19 @@ if (isset($_SESSION['user_id'])) {
 					$icon
 				);
 			}
-			echo json_encode($output);	
-			break;
+				echo json_encode($output);	
+				break;
 		case 2:
 			//$sql = "select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, '" . $iid . "' as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id where s.is_dead = 1 and last_updated > now() - interval 24 hour";
 			//$result = mysql_query($sql);
 			$query = $dbhandle->prepare("select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, ? as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id where s.is_dead = 1 and last_updated > now() - interval 24 hour");
-			$result = $query->execute(array($iid));
+			$query->execute(array($iid));
+			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();
 			//for ($i = 0; $i < mysql_num_rows($result); $i++) {
-			for ($i = 0; $i < array_count($result); $i++) {
+			for ($i = 0; $i < count($result); $i++) {
 				//$row = mysql_fetch_assoc($result);
-				$row = $result->fetch();
+				$row = $result[$i];
 
 				$Worldspace = str_replace("[", "", $row['worldspace']);
 				$Worldspace = str_replace("]", "", $Worldspace);
@@ -141,18 +167,19 @@ if (isset($_SESSION['user_id'])) {
 					$icon
 				);
 			}
-			echo json_encode($output);	
-			break;
+				echo json_encode($output);	
+				break;
 		case 3:
 			//$sql = "select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, '" . $iid . "' as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id where last_updated > now() - interval 24 hour";
 			//$result = mysql_query($sql);
 			$query = $dbhandle->prepare("select s.id, p.name, 'Player' as type, s.worldspace as worldspace, s.survival_time as survival_time, s.model as model, s.survivor_kills as survivor_kills, s.zombie_kills as zombie_kills, s.bandit_kills as bandit_kills, ? as instance, s.is_dead as is_dead, s.unique_id as unique_id from profile p join survivor s on p.unique_id = s.unique_id where last_updated > now() - interval 24 hour");
-			$result = $query->execute(array($iid));
+			$query->execute(array($iid));
+			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();
 			//for ($i = 0; $i < mysql_num_rows($result); $i++) {
-			for ($i = 0; $i < array_count($result); $i++) {
+			for ($i = 0; $i < count($result); $i++) {
 				//$row = mysql_fetch_assoc($result);
-				$row = $result->fetch();
+				$row = $result[$i];
 
 				$Worldspace = str_replace("[", "", $row['worldspace']);
 				$Worldspace = str_replace("]", "", $Worldspace);
@@ -186,16 +213,18 @@ if (isset($_SESSION['user_id'])) {
 			echo json_encode($output);
 			break;		
 		case 4:
-			//$sql = "select iv.id, v.class_name, 0 owner_id, iv.worldspace, iv.inventory, iv.instance_id, iv.parts, fuel, oc.type, damage from instance_vehicle iv inner join vehicle v on iv.vehicle_id = v.id inner join object_classes oc on v.class_name = oc.classname where iv.instance_id = '" . $iid . "'";
-			//$result = mysql_query($sql);
 			$pagetitle = "Current Ingame vehicles";
-			$query = $dbhandle->prepare("select iv.id, v.class_name, 0 owner_id, iv.worldspace, iv.inventory, iv.instance_id, iv.parts, fuel, oc.type, damage from instance_vehicle iv inner join vehicle v on iv.vehicle_id = v.id inner join object_classes oc on v.class_name = oc.classname where iv.instance_id = ?");
-			$result = $query->execute(array($iid));
+			//$sql = "select iv.id, v.class_name, 0 owner_id, iv.worldspace, iv.inventory, iv.instance_id, iv.parts, fuel, oc.type, damage from instance_vehicle iv inner join vehicle v on iv.world_vehicle_id = v.id inner join object_classes oc on v.class_name = oc.classname where iv.instance_id = '" . $iid . "'";
+			
+			//$result = mysql_query($sql);
+			$query = $dbhandle->prepare("select iv.id, v.class_name, 0 owner_id, iv.worldspace, iv.inventory, iv.instance_id, iv.parts, fuel, oc.type, damage from instance_vehicle iv inner join vehicle v on iv.world_vehicle_id = v.id inner join object_classes oc on v.class_name = oc.classname where iv.instance_id = ?");
+			$query->execute(array($iid));
+			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();
 			//for ($i = 0; $i < mysql_num_rows($result); $i++) {
-			for ($i = 0; $i < array_count($result); $i++) {
+			for ($i = 0; $i < count($result); $i++) {
 				//$row = mysql_fetch_assoc($result);
-				$row = $result->fetch();
+				$row = $result[$i];
 
 				$Worldspace = str_replace("[", "", $row['worldspace']);
 				$Worldspace = str_replace("]", "", $Worldspace);
@@ -222,12 +251,13 @@ if (isset($_SESSION['user_id'])) {
 			//$sql = "select wv.*, v.*, oc.* from world_vehicle wv inner join vehicle v on wv.vehicle_id = v.id inner join object_classes oc on v.class_name = oc.classname where wv.world_id = '" . $world . "'";
 			//$result = mysql_query($sql);
 			$query = $dbhandle->prepare("select wv.*, v.*, oc.* from world_vehicle wv inner join vehicle v on wv.vehicle_id = v.id inner join object_classes oc on v.class_name = oc.classname where wv.world_id = ?");
-			$result = $query->execute(array($world));
+			$query->execute(array($world));
+			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();
 			//for ($i = 0; $i < mysql_num_rows($result); $i++) {
-			for ($i = 0; $i < array_count($result); $i++) {
+			for ($i = 0; $i < count($result); $i++) {
 				//$row = mysql_fetch_assoc($result);
-				$row = $result->fetch();
+				$row = $result[$i];
 
 				$Worldspace = str_replace("[", "", $row['worldspace']);
 				$Worldspace = str_replace("]", "", $Worldspace);
@@ -254,12 +284,13 @@ if (isset($_SESSION['user_id'])) {
 			//$sql = "select * from instance_deployable id inner join deployable d on id.deployable_id = d.id inner join object_classes oc on d.class_name = oc.classname where d.class_name = 'TentStorage' and id.instance_id = '" . $iid . "'";
 			//$result = mysql_query($sql);
 			$query = $dbhandle->prepare("select * from instance_deployable id inner join deployable d on id.deployable_id = d.id inner join object_classes oc on d.class_name = oc.classname where d.class_name = 'TentStorage' and id.instance_id = ?");
-			$result = $query->execute(array($iid));
+			$query->execute(array($iid));
+			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();
 			//for ($i = 0; $i < mysql_num_rows($result); $i++) {
-			for ($i = 0; $i < array_count($result); $i++) {
+			for ($i = 0; $i < count($result); $i++) {
 				//$row = mysql_fetch_assoc($result);
-				$row = $result->fetch();
+				$row = $result[$i];
 
 				$Worldspace = str_replace("[", "", $row['worldspace']);
 				$Worldspace = str_replace("]", "", $Worldspace);
@@ -285,12 +316,13 @@ if (isset($_SESSION['user_id'])) {
 			//$sql = "select * from instance_deployable id inner join deployable d on id.deployable_id = d.id inner join object_classes oc on d.class_name = oc.classname where d.class_name in ('Sandbag1_DZ', 'TrapBear', 'Hedgehog_DZ', 'Wire_cat1') and id.instance_id = '" . $iid . "'";
 			//$result = mysql_query($sql);
 			$query = $dbhandle->prepare("select * from instance_deployable id inner join deployable d on id.deployable_id = d.id inner join object_classes oc on d.class_name = oc.classname where d.class_name in ('Sandbag1_DZ', 'TrapBear', 'Hedgehog_DZ', 'Wire_cat1') and id.instance_id = ?");
-			$result = $query->execute(array($iid));
+			$query->execute(array($iid));
+			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();
 			//for ($i = 0; $i < mysql_num_rows($result); $i++) {
-			for ($i = 0; $i < array_count($result); $i++) {
+			for ($i = 0; $i < count($result); $i++) {
 				//$row = mysql_fetch_assoc($result);
-				$row = $result->fetch();
+				$row = $result[$i];
 
 				$Worldspace = str_replace("[", "", $row['worldspace']);
 				$Worldspace = str_replace("]", "", $Worldspace);
@@ -314,15 +346,71 @@ if (isset($_SESSION['user_id'])) {
 			break;
 		case 8;
 			$pagetitle = "Current Ingame vehicles";
-			//$sql = "select s.id,p.name class_name,'Player' as type,s.worldspace,s.model,s.unique_id,s.zombie_kills,s.bandit_kills,s.survivor_kills,s.survival_time from profile p join survivor s on p.unique_id = s.unique_id join world w on s.world_id = w.id join instance i on w.id = i.world_id and i.id = '" . $iid . "' where s.is_dead = 0 and s.last_updated > now() - interval 1 minute union select iv.id,v.class_name,oc.type,iv.worldspace,'none' as model,'none' as unique_id,'none' as zombie_kills,'none' as bandit_kills,'none' as survivor_kills,'none' as survival_time from instance_vehicle iv join vehicle v on iv.vehicle_id = v.id join object_classes oc on v.class_name = oc.classname where iv.instance_id = '" . $iid . "' union select id.id,d.class_name,oc.type,id.worldspace,'none' as model,'none' as unique_id,'none' as zombie_kills,'none' as bandit_kills,'none' as survivor_kills,'none' as survival_time from instance_deployable id join deployable d on id.deployable_id = d.id join object_classes oc on d.class_name = oc.classname where id.instance_id = '" . $iid . "'";
-			//$result = mysql_query($sql);
-			$query = $dbhandle->prepare("select s.id,p.name class_name,'Player' as type,s.worldspace,s.model,s.unique_id,s.zombie_kills,s.bandit_kills,s.survivor_kills,s.survival_time from profile p join survivor s on p.unique_id = s.unique_id join world w on s.world_id = w.id join instance i on w.id = i.world_id and i.id = ? where s.is_dead = 0 and s.last_updated > now() - interval 1 minute union select iv.id,v.class_name,oc.type,iv.worldspace,'none' as model,'none' as unique_id,'none' as zombie_kills,'none' as bandit_kills,'none' as survivor_kills,'none' as survival_time from instance_vehicle iv join vehicle v on iv.vehicle_id = v.id join object_classes oc on v.class_name = oc.classname where iv.instance_id = ? union select id.id,d.class_name,oc.type,id.worldspace,'none' as model,'none' as unique_id,'none' as zombie_kills,'none' as bandit_kills,'none' as survivor_kills,'none' as survival_time from instance_deployable id join deployable d on id.deployable_id = d.id join object_classes oc on d.class_name = oc.classname where id.instance_id = ?");
-			$result = $query->execute(array($iid,$iid,$iid));
+			/*
+			$sql = "select
+			s.id,
+			p.name class_name,
+			'Player' as type,
+			s.worldspace,
+			s.model,
+			s.unique_id,
+			s.zombie_kills,
+			s.bandit_kills,
+			s.survivor_kills,
+			s.survival_time
+			from
+			profile p
+			join survivor s on p.unique_id = s.unique_id
+			join world w on s.world_id = w.id
+			join instance i on w.id = i.world_id and i.id = '" . $iid . "'
+			where
+			s.is_dead = 0
+			and s.last_updated > now() - interval 1 minute
+			union
+			select
+			iv.id,
+			v.class_name,
+			oc.type,
+			iv.worldspace,
+			'none' as model,
+			'none' as unique_id,
+			'none' as zombie_kills,
+			'none' as bandit_kills,
+			'none' as survivor_kills,
+			'none' as survival_time
+			from
+			instance_vehicle iv
+			join vehicle v on iv.world_vehicle_id = v.id
+			join object_classes oc on v.class_name = oc.classname
+			where iv.instance_id = '" . $iid . "'
+			union
+			select
+			id.id,
+			d.class_name,
+			oc.type,
+			id.worldspace,
+			'none' as model,
+			'none' as unique_id,
+			'none' as zombie_kills,
+			'none' as bandit_kills,
+			'none' as survivor_kills,
+			'none' as survival_time
+			from
+			instance_deployable id
+			join deployable d on id.deployable_id = d.id
+			join object_classes oc on d.class_name = oc.classname
+			where
+			id.instance_id = '" . $iid . "'";
+			*/
+			$query = $dbhandle->prepare("select s.id,p.name class_name,'Player' as type,s.worldspace,s.model,s.unique_id,s.zombie_kills,s.bandit_kills,s.survivor_kills,s.survival_time from profile p join survivor s on p.unique_id = s.unique_id join world w on s.world_id = w.id join instance i on w.id = i.world_id and i.id = ? where s.is_dead = 0 and s.last_updated > now() - interval 1 minute union select iv.id,v.class_name,oc.type,iv.worldspace,'none' as model,'none' as unique_id,'none' as zombie_kills,'none' as bandit_kills,'none' as survivor_kills,'none' as survival_time from instance_vehicle iv join vehicle v on iv.world_vehicle_id = v.id join object_classes oc on v.class_name = oc.classname where iv.instance_id = ? union select id.id,d.class_name,oc.type,id.worldspace,'none' as model,'none' as unique_id,'none' as zombie_kills,'none' as bandit_kills,'none' as survivor_kills,'none' as survival_time from instance_deployable id join deployable d on id.deployable_id = d.id join object_classes oc on d.class_name = oc.classname where id.instance_id = ?");
+			$result = mysql_query($sql);
+			$query->execute(array($iid,$iid,$iid));
+			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();
 			//for ($i = 0; $i < mysql_num_rows($result); $i++) {
-			for ($i = 0; $i < array_count($result); $i++) {
+			for ($i = 0; $i < count($result); $i++) {
 				//$row = mysql_fetch_assoc($result);
-				$row = $result->fetch();
+				$row = $result[$i];
 
 				$Worldspace = str_replace("[", "", $row['worldspace']);
 				$Worldspace = str_replace("]", "", $Worldspace);
@@ -365,7 +453,7 @@ if (isset($_SESSION['user_id'])) {
 			break;
 		default:
 			die("[]");
-	}	
+		}	
 }
 ?>
 

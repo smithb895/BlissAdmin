@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <items>
 	<s5Rnd_127x99_as50>
 		<Type>heavyammo</Type>
@@ -354,6 +354,10 @@
         <Type>heavyammo</Type>
         <Slots>1</Slots>
     </sItemHeatPack>
+	 <sItemHeatpack>
+        <Type>heavyammo</Type>
+        <Slots>1</Slots>
+    </sItemHeatpack>
     <sItemJerrycan>
         <Type>heavyammo</Type>
         <Slots>3</Slots>
@@ -590,6 +594,10 @@
         <Type>heavyammo</Type>
         <Slots>2</Slots>
     </sPartWoodPile>
+	<sPartWoodpile>
+        <Type>heavyammo</Type>
+        <Slots>2</Slots>
+    </sPartWoodpile>
     <sPipeBomb>
         <Type>heavyammo</Type>
         <Slots>2</Slots>
@@ -682,8 +690,48 @@
 		<Type>rifle</Type>
 		<Slots>10</Slots>
 	</sM16A4_ACG_GL>
-	<M4A1_HWS_GL_SD_Camo>
+	<sM4A1_HWS_GL_SD_Camo>
 		<Type>rifle</Type>
 		<Slots>10</Slots>
-	</M4A1_HWS_GL_SD_Camo>
+	</sM4A1_HWS_GL_SD_Camo>
+	<sSkin_CamoWinter_DZN>
+		<Type>heavyammo</Type>
+		<Slots>1</Slots>
+	</sSkin_CamoWinter_DZN>
+	<sUZI_SD_EP1>
+		<Type>pistol</Type>
+		<Slots>5</Slots>
+	</sUZI_SD_EP1>
+	<sBrokenItemGPS>
+		<Type>item</Type>
+		<Slots>1</Slots>
+	</sBrokenItemGPS>
+	<snsw_er7s>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</snsw_er7s>
+	<snsw_er7a>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</snsw_er7a>
+	<sBrokenNVGoggles>
+		<Type>binocular</Type>
+		<Slots>1</Slots>
+	</sBrokenNVGoggles>
+	<snsw_er7mm>
+		<Type>heavyammo</Type>
+		<Slots>1</Slots>
+	</snsw_er7mm>
+	<s30Rnd_9x19_UZI_SD>
+		<Type>smallammo</Type>
+		<Slots>1</Slots>
+	</s30Rnd_9x19_UZI_SD>
+	<sBAF_L85A2_UGL_ACOG>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sBAF_L85A2_UGL_ACOG>
+	<sBrokenItemRadio>
+		<Type>item</Type>
+		<Slots>1</Slots>
+	</sBrokenItemRadio>
 </items>

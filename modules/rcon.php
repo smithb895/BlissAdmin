@@ -112,7 +112,6 @@ function rcon($serverip,$serverport,$rconpassword,$cmd){
 
 	return $answer;
 }
-
 }
 else
 {

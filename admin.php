@@ -1,21 +1,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--<script src="js/jquery.min.js" type="text/javascript"></script>-->
 <?php
-session_start();
-include ('config.php');
+error_reporting(E_ALL);
+ini_set('display_errors',1);
 
-//mysql_connect($hostname, $username, $password) or die (mysql_error());
-//mysql_select_db($dbName) or die (mysql_error());
-try  {
-	$dbhandle = new PDO("mysql:host=$hostname;dbname=$dbName", $username, $password);
-} catch (PDOException $e) {
-	return "There was an error connecting to the database.  Check your config file.";
-}
+//require('session.php');
+session_start();
+require_once('config.php');
+//require_once('/modules/login_connect.php');
+global $iid;
+global $serverip;
+global $serverport;
+global $rconpassword;
+global $map;
+global $world;
+
 
 if (isset($_GET['logout']))
 {
-	//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('LOGOUT','{$_SESSION['login']}',NOW())";
-	//$sql2 = mysql_query($query) or die(mysql_error());
-	$query = $dbhandle->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('LOGOUT',?,NOW())");
+	require_once('/modules/login_connect.php');
+	$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('LOGOUT',?,NOW())");
 	$query->execute(array($_SESSION['login']));
 	
 	if (isset($_SESSION['user_id']))
@@ -29,9 +33,13 @@ if (isset($_GET['logout']))
 
 if (isset($_SESSION['user_id']))
 {
+	require_once('/modules/hive_connect.php');
+	require_once('/modules/login_connect.php');
+	mysql_connect($hostname, $username, $password) or die (mysql_error());
+	mysql_select_db($dbName) or die (mysql_error());
 	include ('modules/rcon.php');
 	include ('modules/tables/rows.php');
-	function slashes(&$el)
+	function slashes($el)
 	{
 		if (is_array($el))
 			foreach($el as $k=>$v)
@@ -44,6 +52,21 @@ if (isset($_SESSION['user_id']))
 	}else{
 		$show = 0;
 	}
+	if (isset($_GET['instance_id'])) {
+		$_current_instance = preg_replace('#[0-9]#', '', $_GET['instance_id']);
+
+		foreach ($DayZ_Servers as $server) {
+			if ($_current_instance == $server->getMissionInstance()) {
+				$iid = $server->getMissionInstance();
+				$serverip = $server->getServerIP();
+				$serverport = $server->getServerPort();
+				$rconpassword = $server->getRconPassword();
+				$map = $server->getServerMap();
+				$world = $server->getWorldID();
+			}
+		}
+	}
+
 
 	// Start: page-header 
 	include ('modules/header.php');
@@ -72,6 +95,7 @@ if (isset($_SESSION['user_id']))
 }
 else
 {
-	include ('modules/login.php');
+	//include ('modules/login.php');
+	header('Location: loginform.php');
 }
 ?>

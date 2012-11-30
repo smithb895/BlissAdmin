@@ -1,9 +1,12 @@
 <?php
 if (isset($_SESSION['user_id']))
 {
-	$pagetitle = "Database Admin Coming Soon";
-	$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('DATABASE ADMIN','{$_SESSION['login']}',NOW())";
-	$sql2 = mysql_query($query) or die(mysql_error());
+	if ($_SESSION['tier'] == 1) {
+		$pagetitle = "Database Admin (Under Construction)";
+		//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('DATABASE ADMIN','{$_SESSION['login']}',NOW())";
+		//$sql2 = mysql_query($query) or die(mysql_error());
+		$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('DATABASE ADMIN',?,NOW())");
+		$query->execute(array($_SESSION['login']));
 ?>
 
 <div id="page-heading">
@@ -12,39 +15,59 @@ if (isset($_SESSION['user_id']))
 	echo "<h1>".$pagetitle."</h1>";
 ?>
 </div>
-<table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
-	<tr>
-		<th rowspan="3" class="sized"><img src="images/shared/side_shadowleft.jpg" width="20" height="300" alt="" /></th>
-		<th class="topleft"></th>
-		<td id="tbl-border-top">&nbsp;</td>
-		<th class="topright"></th>
-		<th rowspan="3" class="sized"><img src="images/shared/side_shadowright.jpg" width="20" height="300" alt="" /></th>
-	</tr>
-	<tr>
-		<td id="tbl-border-left"></td>
-		<td>
-		<!--  start content-table-inner ...................................................................... START -->
-		<div id="content-table-inner">		
-			
-	
-			<div class="clear"></div>
 
-		</div>
-		<!--  end content-table-inner ............................................END  -->
-		</td>
-		<td id="tbl-border-right"></td>
-	</tr>
-	<tr>
-		<th class="sized bottomleft"></th>
-		<td id="tbl-border-bottom">&nbsp;</td>
-		<th class="sized bottomright"></th>
-	</tr>
-	</table>
-	<div class="clear">&nbsp;</div>
+<div id="main-page-content">
+	<div class="left">
+		<h2>Import Vehicle Spawns from mission.sqm</h2>
+		<p>Here you can upload a mission.sqm that was created in the mission editor, and it will insert all vehicles placed in the mission editor into the HIVE.  Make sure you ONLY place vehicles in the mission.sqm and NOTHING ELSE!</p>
+		<br />
+		<form enctype="multipart/form-data" action="modules/uploader.php" method="POST">
+			Choose Map: 
+			<br />
+			&nbsp;&nbsp;&nbsp;<input type="radio" name="worldID"  value="1" /> Chernarus
+			<br />
+			&nbsp;&nbsp;&nbsp;<input type="radio" name="worldID"  value="2" /> Lingor
+			<br />
+			&nbsp;&nbsp;&nbsp;<input type="radio" name="worldID"  value="8" /> Namalsk
+			<br />
+			<br />
+			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
+			Choose file: <br />
+			&nbsp;&nbsp;&nbsp;<input name="missionfile" type="file" />
+			<br />
+			<br />
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="Upload" />
+		</form>
+		<br />
+		<br />
+		<br />
+	</div>
+	<div class="right">
+		<h2>Database Cleanup</h2>
+		<br />
+		<br />
+		<br />
+	</div>
+	<div class="centered">
+		<h2>Database Stats</h2>
+		<br />
+		<br />
+		<br />
+	</div>
+	
+</div>
+<div class="clear">&nbsp;</div>
 <?php
-}
-else
-{
+	} else {
+		$pagetitle = "Access Denied";
+		echo '
+			<div id="page-heading">
+				<title>'.$pagetitle.' - '.$sitename.'</title>
+				<h1>'.$pagetitle.'</h1>
+			</div>
+		';
+	}
+} else {
 	header('Location: admin.php');
 }
 ?>

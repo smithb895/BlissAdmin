@@ -106,23 +106,23 @@ INSERT INTO `object_classes` (`Classname`, `Type`) VALUES
 -- Структура таблицы `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` smallint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `login` varchar(50) NOT NULL DEFAULT '',
-  `password` varchar(32) NOT NULL DEFAULT '',
-  `salt` char(3) NOT NULL DEFAULT '',
+CREATE TABLE IF NOT EXISTS `hive_admins` (
+  `id` int(2) unsigned NOT NULL AUTO_INCREMENT,
+  `hive_user` varchar(64) NOT NULL DEFAULT '',
+  `hive_password` varchar(512) NOT NULL DEFAULT '',
+  `salt` varchar(64) NOT NULL DEFAULT '',
+  `salt2` varchar(64) NOT NULL DEFAULT '',
+  `tier` smallint(2) NOT NULL DEFAULT 2,
   `lastlogin` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `tier` smallint(2) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `login` (`login`)
+  UNIQUE KEY `hive_user` (`hive_user`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
 --
--- Дамп данных таблицы `users`
+-- Дамп данных таблицы `hive_admins`
 --
-
-INSERT INTO `users` (`id`, `login`, `password`, `salt`, `lastlogin`, `tier`) VALUES
-(1, 'admin', 'e818f0d38a7dadb1ec1d839d46e0b5ca', '5yu', NULL, 1);
+INSERT INTO `hive_admins` (`id`, `hive_user`, `hive_password`, `salt`, `salt2`, `tier`, `lastlogin`) VALUES
+(1, 'admin', 'e039e0e6ceda6ba431303077f218937a8a24489e9fc6075918ce61b1f797a8b917250b5a91ef1ac12723ae29d4943cc04bfd29b0c42cfdcacebac9ea90653719', 'ld78J4380f&*(#nhfdghlH1xzpq590&DqQlH349302&lm!qweeruSl^21@Xirtnv', 'EycR3pswG$d82mn3ucv378g02&$vjpiZsdA-#43894fdkWMVBu423493$#!^OVc8', 1, NULL);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

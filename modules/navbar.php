@@ -1,5 +1,9 @@
 <?php
-include ('config.php');
+//error_reporting(E_ALL);
+//ini_set('display_errors',1);
+
+include_once('config.php');
+
 if (isset($_SESSION['user_id']))
 {
 ?>
@@ -94,7 +98,8 @@ if (isset($_SESSION['user_id']))
 					</ul>
 				</li>
 				<li class="li-dashboard root active"><a href="_gear/index.php" style="color:#FFF;" class="dashboard item">Gear &amp; Pos</a></li>
-				<?php if ($map == "chernarus") { ?>
+				<!--<li class="li-dashboard root active"><a href="admin.php" style="color:#FFF;" class="dashboard item">Dashboard</a></li>-->
+				<?php if ($map == "Chernarus") { ?>
 				<li class="li-users parent root"><span class=" daddy item"><span>Chern</span></span>
 					<ul class="level2 parent-users">
 						<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Instance ID:<?php echo $iid?></a>
@@ -129,10 +134,35 @@ if (isset($_SESSION['user_id']))
 						</li>
 					</ul>	
 				</ul>
-				<?php } ?>
-				<?php if ($map == "lingor") { ?>
+				<?php } else { ?>
 				<li class="li-users parent root"><span class=" daddy item"><span>Maps</span></span>
 					<ul class="level2 parent-users">
+					<?php
+						foreach ($DayZ_Servers as $server) {
+							$_servermap = $server->getServerMap();
+							$_serverinstance = $server->getMissionInstance();
+							echo '
+								<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">ID '.$_serverinstance.' - '.$_servermap.'</a>
+									<ul class="level3 parent-user-manager">
+										<li class="li-groups parent"><a href="#nogo" class="class:groups daddy item">Recent Players</a>
+										<ul class="level3 parent-groups">
+											<li class="li-add-new-user"><a href="admin.php?view='.strtolower($_servermap).'map&show=0&instance_id='.$_serverinstance.'" class="class:newarticle item">Within 2 Min</a></li>
+										</ul>
+								<li class="li-groups parent"><a href="#nogo" class="class:groups daddy item">Objects</a>
+									<ul class="level3 parent-groups">
+										<li class="li-add-new-group"><a href="admin.php?view='.strtolower($_servermap).'map&show=4" class="class:newarticle item">Vehicles Ingame</a></li>
+										<li class="li-add-new-group"><a href="admin.php?view='.strtolower($_servermap).'map&show=6" class="class:newarticle item">All Ingame Tents</a></li>
+										<li class="li-add-new-group"><a href="admin.php?view='.strtolower($_servermap).'map&show=7" class="class:newarticle item">Other Deployables</a></li>
+									</ul>
+									<li class="li-add-new-user"><a href="admin.php?view='.strtolower($_servermap).'map&show=8" class="class:newarticle item">Everything</a></li>
+								</li>
+									</ul>
+								</li>
+							
+							';
+						}
+					?>
+					<!--
 						<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Instance ID:<?php echo $iid?></a>
 							<ul class="level3 parent-user-manager">
 								<li class="li-groups parent"><a href="#nogo" class="class:groups daddy item">Recent Players</a>
@@ -149,6 +179,8 @@ if (isset($_SESSION['user_id']))
 						</li>
 							</ul>
 						</li>
+					-->
+						
 						<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Database</a>
 							<ul class="level3 parent-user-manager">
 							<li class="li-groups parent"><a href="#nogo" class="class:groups daddy item">Players</a>

@@ -2,8 +2,10 @@
 if (isset($_SESSION['user_id']))
 {
 	$pagetitle = "Add item";
-	$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('MANAGE VIPS','{$_SESSION['login']}',NOW())";
-	$sql2 = mysql_query($query) or die(mysql_error());
+	//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('MANAGE VIPS','{$_SESSION['login']}',NOW())";
+	//$sql2 = mysql_query($query) or die(mysql_error());
+	$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('MANAGE VIPS',?,NOW())");
+	$query->execute(array($_SESSION['login']));
 ?>
 
 <div id="page-heading">

@@ -1,10 +1,19 @@
 <?php
+//error_reporting(E_ALL);
+//ini_set('display_errors',1);
+//include_once('/config.php');
+
 if (isset($_SESSION['user_id']))
 {
+require_once('/modules/hive_connect.php');
+require_once('/modules/login_connect.php');
 $pagetitle = "Items check";
 
-$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('ITEMS CHECK','{$_SESSION['login']}',NOW())";
-	$sql2 = mysql_query($query) or die(mysql_error());
+//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('ITEMS CHECK','{$_SESSION['login']}',NOW())";
+//$sql2 = mysql_query($query) or die(mysql_error());
+$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('ITEMS CHECK',?,NOW())");
+$query->execute(array($_SESSION['login']));
+
 ?>
 
 <div id="page-heading">
@@ -17,27 +26,39 @@ $query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('ITEMS CHECK
 	
 	//$items_ini = parse_ini_file("/items.ini", true);
 	$xml = file_get_contents('/items.xml', true);
-	require_once('modules/xml2array.php');
+	require_once('/modules/xml2array.php');
 	$items_xml = XML2Array::createArray($xml);
-	
+	//print_r($items_xml);
 	//$query = "SELECT * FROM survivor";
+	$countquery = "select count(*) from profile p left join survivor s on p.unique_id = s.unique_id where s.is_dead = 0";
 	$query = "select p.name, s.* from profile p left join survivor s on p.unique_id = s.unique_id where s.is_dead = 0";
-	$res = mysql_query($query) or die(mysql_error());
-	$number = mysql_num_rows($res);
+	if ($cntres = $dbhandle->query($countquery)) {
+		$number = $cntres->fetchColumn();
+		$res = $dbhandle->query($query);
+	}
+	//print_r($res);
+	//$res = mysql_query($query) or die(mysql_error());
+	//$number = mysql_num_rows($res);
 	$rows = null;
-	$itemscount = 0;		
+	//$query = $dbhandle->query("select p.name, s.* from profile p left join survivor s on p.unique_id = s.unique_id where s.is_dead = 0");
+	
+	$itemscount = 0;
 	if ($number == 0) {
 	  echo "<CENTER>Не найдено</CENTER>";
 	} else {
-	  while ($row=mysql_fetch_array($res)) {
-		$Worldspace = str_replace("[", "", $row['pos']);
+	  //while ($row=mysql_fetch_array($res)) {
+	  $allrows = $res->fetchAll(PDO::FETCH_ASSOC);
+	  //while ($row=$res->fetch(PDO::FETCH_ASSOC)) {
+	  foreach ($allrows as $row) {
+		//print_r($row);
+		$Worldspace = str_replace("[", "", $row['worldspace']);
 		$Worldspace = str_replace("]", "", $Worldspace);
 		$Worldspace = str_replace(",", ",", $Worldspace);
 		$Worldspace = explode(",", $Worldspace);
 		
 		$Inventory = $row['inventory'];	
 		$Inventory = str_replace(",", ",", $Inventory);
-		$Inventory  = json_decode($Inventory);	
+		$Inventory  = json_decode($Inventory);
 		
 		$Backpack  = $row['backpack'];
 		$Backpack = str_replace(",", ",", $Backpack);

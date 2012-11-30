@@ -1,50 +1,67 @@
 <?php
 if (isset($_SESSION['user_id']))
 {
+	include_once('/modules/login_connect.php');
 	if ($_SESSION['tier'] == 1) {
-	$pagetitle = "Manage admins";
-	$delresult = "";
-	if (isset($_POST["user"])){
-		$aDoor = $_POST["user"];
-		$N = count($aDoor);
-		for($i=0; $i < $N; $i++)
-		{
-			$query = "SELECT * FROM users WHERE id = ".$aDoor[$i].""; 
-			$res2 = mysql_query($query) or die(mysql_error());
-			while ($row2=mysql_fetch_array($res2)) {
-				$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('DELETE ADMIN: ".$row2['login']."','{$_SESSION['login']}',NOW())";
-				$sql2 = mysql_query($query) or die(mysql_error());
-				$query = "DELETE FROM `users` WHERE id='".$aDoor[$i]."'";
-				$sql2 = mysql_query($query) or die(mysql_error());
-				$delresult .= '<div id="message-green">
-				<table border="0" width="100%" cellpadding="0" cellspacing="0">
-				<tr>
-					<td class="green-left">Admin '.$row2['login'].' successfully removed!</td>
-					<td class="green-right"><a class="close-green"><img src="images/table/icon_close_green.gif" alt="" /></a></td>
-				</tr>
-				</table>
-				</div>';
-			}		
-			//echo($aDoor[$i] . " ");
+		$pagetitle = "Manage admins";
+		$delresult = "";
+		//$dbhandle2 = new PDO("mysql:host=$adminsdb_address;dbname=$adminsdb_db", $adminsdb_user, $adminsdb_pass);
+		//include_once('/modules/login_connect.php');
+		if (isset($_POST["user"])){
+			$aDoor = $_POST["user"];
+			$N = count($aDoor);
+			for($i=0; $i < $N; $i++)
+			{
+				//$query = "SELECT * FROM hive_admins WHERE id = ".$aDoor[$i].""; 
+				//$res2 = mysql_query($query) or die(mysql_error());
+				$query = $dbhandle2->prepare("SELECT * FROM hive_admins WHERE id=?");
+				$query->execute(array($aDoor[$i]));
+				//while ($row2=mysql_fetch_array($res2)) {
+				while ($row2=$query->fetch()) {
+					//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('DELETE ADMIN: ".$row2['login']."','{$_SESSION['login']}',NOW())";
+					//$sql2 = mysql_query($query) or die(mysql_error());
+					//$query = "DELETE FROM `hive_admins` WHERE id='".$aDoor[$i]."'";
+					//$sql2 = mysql_query($query) or die(mysql_error());
+					
+					$query2 = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('DELETE ADMIN: ?',?,NOW())");
+					$query2->execute(array($row2['login'],$_SESSION['login']));
+					$query3 = $dbhandle2->prepare("DELETE FROM `hive_admins` WHERE id=?");
+					$query3->execute(array($aDoor[$i]));
+					
+					$delresult .= '<div id="message-green">
+					<table border="0" width="100%" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="green-left">Admin '.$row2['login'].' successfully removed!</td>
+						<td class="green-right"><a class="close-green"><img src="images/table/icon_close_green.gif" alt="" /></a></td>
+					</tr>
+					</table>
+					</div>';
+				}		
+				//echo($aDoor[$i] . " ");
+			}
+			//echo $_GET["deluser"];
 		}
-		//echo $_GET["deluser"];
-	}
-	
-	$query = "SELECT * FROM users ORDER BY id ASC"; 
-	$res = mysql_query($query) or die(mysql_error());
-	$number = mysql_num_rows($res);
-	
-	$users="";
-	while ($row=mysql_fetch_array($res)) {
-		$users .= "<tr><td><input name=\"user[]\" value=\"".$row['id']."\" type=\"checkbox\"/></td><td>".$row['id']."</td><td>".$row['login']."</td><td>".$row['lastlogin']."</td></tr>";
-	}
-	
-	$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('MANAGE ADMINS','{$_SESSION['login']}',NOW())";
-	$sql2 = mysql_query($query) or die(mysql_error());
-	
-	
-	
-	
+		
+		//$query = "SELECT * FROM hive_admins ORDER BY id ASC"; 
+		//$res = mysql_query($query) or die(mysql_error());
+		//$number = mysql_num_rows($res);
+		$query = $dbhandle2->prepare("SELECT * FROM hive_admins ORDER BY id ASC");
+		$query->execute();
+		
+		$users="";
+		//while ($row=mysql_fetch_array($res)) {
+		while ($row=$query->fetch()) {
+			$users .= "<tr><td><input name=\"user[]\" value=\"".$row['id']."\" type=\"checkbox\"/></td><td>".$row['id']."</td><td>".$row['hive_user']."</td><td>".$row['lastlogin']."</td></tr>";
+		}
+		
+		//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('MANAGE ADMINS','{$_SESSION['login']}',NOW())";
+		//$sql2 = mysql_query($query) or die(mysql_error());
+		$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('MANAGE ADMINS',?,NOW())");
+		$query->execute(array($_SESSION['login']));
+		
+		
+		
+		
 
 ?>
 <div id="dvPopup" style="display:none; width:900px; height: 450px; border:4px solid #000000; background-color:#FFFFFF;">

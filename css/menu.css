@@ -110,8 +110,12 @@
 
 
 /* hover background */
-.mc-button a:hover, input#upload-submit:hover, #editor-xtd-buttons a:hover, .button2-left a:hover,#mc-login #form-login .button:hover, #mc-status li:hover, #mc-status li.action:hover, #mc-status li.standard:hover,#mc-status li:hover .mc-dropdown li:hover,.mc-toolbar a:hover,#help.mc-toolbar a:hover, .mc-toolbar .special a:hover,body #toolbar .mc-dropdown li:hover, .mc-dropdown li:hover,#mc-submenu a:hover, .pane-sliders .panel h3:hover,.mc-pagination-container .pages:hover, .mc-pagination .page-button a:hover,#mc-cpanel .pane-sliders .panel h3.title:hover  {background:#88B719;}
-.menutop li:hover .item:hover, .menutop li.active .item:hover,.mc-update-check a:hover,button:hover, input[type="button"]:hover, input[type="submit"]:hover {background-color:#88B719;}
+.mc-button a:hover, input#upload-submit:hover, #editor-xtd-buttons a:hover, .button2-left a:hover,#mc-login #form-login .button:hover, #mc-status li:hover, #mc-status li.action:hover, #mc-status li.standard:hover,#mc-status li:hover .mc-dropdown li:hover,.mc-toolbar a:hover,#help.mc-toolbar a:hover, .mc-toolbar .special a:hover,body #toolbar .mc-dropdown li:hover, .mc-dropdown li:hover,#mc-submenu a:hover, .pane-sliders .panel h3:hover,.mc-pagination-container .pages:hover, .mc-pagination .page-button a:hover,#mc-cpanel .pane-sliders .panel h3.title:hover  {
+	background:#910606;
+}
+.menutop li:hover .item:hover, .menutop li.active .item:hover,.mc-update-check a:hover,button:hover, input[type="button"]:hover, input[type="submit"]:hover {
+	background-color:#910606;
+}
 /* hover text */
 
 #mc-status li select, .pane-sliders .panel h3:hover, .pane-sliders .panel h3:hover a, .menutop li:hover .item:hover, .menutop li.active .item:hover,#mc-header .menutop a:hover, #mc-submenu li:hover a, #mc-status li.action a:hover,#mc-header .menutop li:hover li:hover a:hover, #mc-status li:hover li:hover a,#toolbar li:hover a, .mc-toolbar a:hover,body #toolbar li:hover li:hover a,.mc-pagination-container .pages:hover a,.mc-pagination-container .pages:hover span, .mc-pagination .page-button a:hover {color:#FFFFFF;}

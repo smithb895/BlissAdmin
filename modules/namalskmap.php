@@ -1,6 +1,13 @@
 <?php
 if (isset($_SESSION['user_id']))
 {
+	global $iid;
+	global $serverip;
+	global $serverport;
+	global $rconpassword;
+	global $map;
+	global $world;
+
 	switch($_GET['show']) {
 	case 0:
 		$title = 'Recent Players';
@@ -33,7 +40,7 @@ if (isset($_SESSION['user_id']))
 ?>
 	<h1><?php echo $title; ?></h1>
 	<a href="javascript:toggleFullScreen();">Full Screen</a>
-	<div id="lingor-map" style="width:99%;height:750px;margin:10px auto;border:2px solid #000;"></div>
+	<div id="namalsk-map" style="width:99%;height:750px;margin:10px auto;border:2px solid #000;"></div>
 
     <script type="text/javascript" src="js/jquery.fullscreen.js"></script>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false"></script>
@@ -51,7 +58,7 @@ if (isset($_SESSION['user_id']))
 		  }
 	  
         var Demo = Demo || {};
-        Demo.ImagesBaseUrl = 'tiles/panthera/';
+        Demo.ImagesBaseUrl = 'tiles/namalsk/';
 		var infowindow = null;
 		var marker = null;
 
@@ -64,7 +71,7 @@ if (isset($_SESSION['user_id']))
             });
 
 	function toggleFullScreen() {
-		$('#lingor-map').fullScreen();
+		$('#namalsk-map').fullScreen();
 	}
 
 	var mapMarkers = [];
@@ -116,8 +123,8 @@ if (isset($_SESSION['user_id']))
 			
 			
             // Set custom tiles
-            this._map.mapTypes.set('lingor', new Demo.ImgMapType('lingor', '#dddddd'));
-            this._map.setMapTypeId('lingor');
+            this._map.mapTypes.set('namalsk', new Demo.ImgMapType('namalsk', '#dddddd'));
+            this._map.setMapTypeId('namalsk');
         };
 
 	google.maps.Map.prototype.clearMarkers = function() {
@@ -128,7 +135,10 @@ if (isset($_SESSION['user_id']))
 	};
 	
 	function pollMarkers() {
-	$.getJSON('positions.php?type=<?php echo $_GET['show']; ?>', function(markers) {
+	//$.getJSON('positions.php?type=<?php echo $_GET['show'].'&instance_id='.$iid; ?>', function(markers) {
+	var _query = 'positions.php?type=' + '<?php echo $_GET['show']; ?>' + '&instance_id=' + '<?php echo $_GET['instance_id']; ?>';
+	console.log(_query);
+	$.getJSON(_query, function(markers) {
 		var map = LingorMap._map;
 		map.clearMarkers();
 		for (i = 0; i < markers.length; i++) { 
@@ -166,7 +176,7 @@ if (isset($_SESSION['user_id']))
 
         Demo.ImgMapType.prototype.tileSize = new google.maps.Size(256, 256);
         Demo.ImgMapType.prototype.minZoom = 2;
-        Demo.ImgMapType.prototype.maxZoom = 5;
+        Demo.ImgMapType.prototype.maxZoom = 6;
 
         Demo.ImgMapType.prototype.getTile = function (coord, zoom, ownerDocument) {
             var tilesCount = Math.pow(2, zoom);
@@ -334,7 +344,7 @@ if (isset($_SESSION['user_id']))
         //////////////////////////////////
 	var LingorMap;
         google.maps.event.addDomListener(window, 'load', function () {
-            LingorMap = new Demo.LingorMap(document.getElementById('lingor-map'));
+            LingorMap = new Demo.LingorMap(document.getElementById('namalsk-map'));
 	    setInterval(function() {pollMarkers();}, 10000);
 	    pollMarkers();
         });

@@ -1,5 +1,5 @@
 <?php
-include ('config.php');
+include_once('config.php');
 if (isset($_SESSION['user_id']))
 {	
 	$pnumber = 0;
@@ -29,23 +29,23 @@ if (isset($_SESSION['user_id']))
 			break;
 		case 1:
 			$query = "select profile.name, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id and survivor.is_dead = '0'"; 
-			$pagetitle = "Alive players";		
+			$pagetitle = "Alive players";
 			break;
 		case 2:
 			$query = "select profile.name, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id and survivor.is_dead = '1'"; 
-			$pagetitle = "Dead players";	
+			$pagetitle = "Dead players";
 			break;
 		case 3:
 			$query = "select profile.name, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id"; 
-			$pagetitle = "All players";	
+			$pagetitle = "All players";
 			break;
 		case 4:
-			$query = "SELECT iv.*, v.class_name FROM instance_vehicle iv inner join vehicle v on iv.vehicle_id = v.id WHERE instance_id = '" . $iid . "'";
-			$pagetitle = "All Ingame Objects";	
+			$query = "SELECT iv.*, v.class_name FROM instance_vehicle iv inner join vehicle v on iv.world_vehicle_id = v.id WHERE instance_id = '" . $iid . "'";
+			$pagetitle = "All Ingame Objects";
 			break;
 		case 5:
 			$query = "SELECT * FROM spawns WHERE world = '" . $map . "'";
-			$pagetitle = "Vehicle spawn locations";	
+			$pagetitle = "Vehicle spawn locations";
 			break;
 		case 6:
 			$query = "SELECT * FROM spawns WHERE world = '" . $map . "'";
