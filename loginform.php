@@ -1,3 +1,5 @@
+<?php require_once('check_blacklist.php'); ?>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -13,7 +15,7 @@ $(document).pngFix( );
 </script>
 <!--  End pngFix -->
 </head>
-<body id="login-bg"> 
+<body id="login-bg" OnLoad="document.loginform.username.focus();"> 
  
 <div id="login-holder">
 
@@ -22,13 +24,13 @@ $(document).pngFix( );
 	</div>
 	
 	<div class="clear"></div>
-	<form action="login.php" method="post">
+	<form action="login.php" method="post" id="loginform" name="loginform">
 		<div id="loginbox">	
 			<div id="login-inner">
 				<table border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<th>Username</th>
-					<td><input type="text" name="login" class="login-inp" /></td>
+					<td><input type="text" name="login" id="username" class="login-inp" /></td>
 				</tr>
 				<tr>
 					<th>Password</th>

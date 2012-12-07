@@ -5,10 +5,11 @@
 //session_start();
 //require('config.php');
 require('/modules/login_connect.php');
-
+require_once('check_blacklist.php');
 
 $username = preg_replace('#[^0-9a-z_ \.,\[\]\{\}\!@\#\(\)\-\$%\^&\*\+\\\?=~;:\|+]#i', '', $_POST['login']);
 $password = preg_replace('#[^0-9a-z_ \.,\[\]\{\}\!@\#\(\)\-\$%\^&\*\+\\\?=~;:\|+]#i', '', $_POST['password']);
+$client_ip = getClientIP();
 //$username = $_POST['login'];
 //$password = $_POST['password'];
 
@@ -18,12 +19,21 @@ if ($username && $password)
 	//mysql_connect($adminsdb_address, $adminsdb_user, $adminsdb_pass) or die (mysql_error());
 	//mysql_select_db($adminsdb_db) or die (mysql_error());
 	//$dbhandle2 = new PDO("mysql:host=$adminsdb_address;dbname=$adminsdb_db", $adminsdb_user, $adminsdb_pass);
-	
-	//$countqry = $dbhandle->query("SELECT count(*) FROM `hive_admins` WHERE `hive_user`
-	$query = $dbhandle2->prepare("SELECT `id`,`hive_user`,`hive_password`,`salt`,`salt2`,`tier` FROM `hive_admins` WHERE `hive_user`=? LIMIT 1");
+	$query = $dbhandle2->prepare("SELECT `id`,`hive_user`,`hive_password`,`salt`,`salt2`,`tier`,`locked`,`failed_attempts` FROM `hive_admins` WHERE `hive_user`=? LIMIT 1");
 	$query->execute(array($username));
 	if ($row=$query->fetch(PDO::FETCH_ASSOC))
 	{
+		if ($row['locked'] == 1) {
+			die('Account is locked.  Please contact an administrator.');
+		}
+		$login_attempts = $row['failed_attempts'] + 1;
+		if ($login_attempts > 4) {
+			$query = $dbhandle2->prepare('UPDATE `hive_admins` SET `locked`=1 WHERE `hive_user`=? LIMIT 1');
+			$query->execute(array($username));
+			$queryBlockIP = $dbhandle2->prepare('INSERT INTO `blocked_ips` VALUES (?, NOW())');
+			$queryBlockIP->execute(array($client_ip));
+			die('Too many failed login attempts.');
+		}
 		$salt = $row['salt'];
 		$salt2 = $row['salt2'];
 		
@@ -32,6 +42,7 @@ if ($username && $password)
 		
 		if ($password == $row['hive_password'])
 		{
+			$login_attempts = 0;
 			session_start();
 			// то мы ставим об этом метку в сессии (допустим мы будем ставить ID пользователя)
 			$_SESSION['user_id'] = $row['id'];
@@ -48,7 +59,7 @@ if ($username && $password)
 				setcookie('password', $password, time()+$time, "/");
 			}
 			
-			$query = $dbhandle2->prepare("UPDATE `hive_admins` SET `lastlogin`= NOW() WHERE `hive_user`=? LIMIT 1");
+			$query = $dbhandle2->prepare("UPDATE `hive_admins` SET `lastlogin`= NOW(), `failed_attempts`=0 WHERE `hive_user`=? LIMIT 1");
 			$query->execute(array($username));
 			$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('LOGIN',?,NOW())");
 			$query->execute(array($username));
@@ -60,6 +71,8 @@ if ($username && $password)
 		}
 		else
 		{
+			$query = $dbhandle2->prepare("UPDATE `hive_admins` SET `failed_attempts`=? WHERE `hive_user`=? LIMIT 1");
+			$query->execute(array($login_attempts,$username));
 			header('Location: admin.php');
 		}
 	}
@@ -69,4 +82,5 @@ if ($username && $password)
 	}
 	//mysql_close();
 }
+
 ?>
