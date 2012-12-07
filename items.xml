@@ -734,4 +734,12 @@
 		<Type>item</Type>
 		<Slots>1</Slots>
 	</sBrokenItemRadio>
+	<smut_heart>
+		<Type>heavyammo</Type>
+		<Slots>1</Slots>
+	</smut_heart>
+	<sAPSI>
+		<Type>heavyammo</Type>
+		<Slots>1</Slots>
+	</sAPSI>
 </items>
