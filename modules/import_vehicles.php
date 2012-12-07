@@ -56,7 +56,8 @@ function import_mission_spawns($dbhandle,$fileName,$worldID) {
 				preg_match('#"[a-z0-9_]+"#i', $rows[$i+3], $matches);
 				$classname = preg_replace('#"#', '', $matches[0]);
 			}
-			$pos = '['.$direction.',['.$pos_array[0].','.$pos_array[2].','.$pos_array[1].']]';
+			$pos = '['.$direction.',['.$pos_array[0].','.$pos_array[2].',0]]';
+			//$pos = '['.$direction.',['.$pos_array[0].','.$pos_array[2].','.$pos_array[1].']]';
 			//Class Check (Will insert a new classname if it doesnt exist)
 			$existing = array();
 			$query = $dbhandle->query("SELECT class_name FROM vehicle");
