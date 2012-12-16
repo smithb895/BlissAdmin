@@ -3,20 +3,25 @@ TODO List
 By: Anzu
 ==========
 Fix:
--Check Items
--Map (shows both servers on same map)(FIXED)
--dashboard playerlist for delta server (problem exists between receiving rcon answer and returning query results)(FIXED)
--Namalsk Map
+-Map (regen tiles?  total tile image may be too small) (also, need to tweak JS in namalskmap.php)
+-dashboard playerlist for delta server (sometimes the list disappears after refreshing once?)
+-Need to test (and maybe fix) Ban/Kick/Delete player buttons in the table rows
+-
 
 Add:
 -cleanup hive options, database admin page
--
+-Add Ban/Kick/Msg player to playerlist rows on dashboard
+-kool features :)
 
 
 
 
-
-
+Done:
++Fixed Check items page
++Separate maps for each server
++Got Namalsk map semi-working
++lots of things i forgot
++Added anti-bruteforce for login
 
 
 

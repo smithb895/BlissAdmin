@@ -17,6 +17,9 @@
 	background-repeat: repeat;*/
 	background: rgba(0,0,0,.6);
 }
+p {
+	font-size: 14px;
+}
 .right {
 	float: right;
 	width: 50%;
@@ -135,6 +138,17 @@
 	color: #DD3700;
 	text-shadow: 0px 0px 6px #DD3700;
 }
+#player_data_table td a {
+	color: #C00;
+	text-decoration: underline;
+	/*text-shadow: 0px 0px 5px #C00;*/
+}
+#player_data_table td a:hover {
+	text-decoration: underline;
+	background: rgba(0, 0, 0, .7);
+	color: #FF5900;
+	text-shadow: 0px 0px 6px #FF5900;
+}
 .left p {
 	width: 80%;
 	text-indent: 20px;
@@ -147,3 +161,35 @@
 	width: 50px;
 	text-align: center;
 }
+h2 {
+	font-size: 24px;
+	color: rgba(210, 0, 0, 1);
+	text-shadow: 0px 0px 8px rgba(230, 0, 0, 1);
+	text-decoration: underline;
+}
+.buttons1 {
+	padding-left:50px;
+}
+.buttons1 a {
+	font-size: 20px;
+	text-shadow: 0px 0px 8px rgba(0, 0, 0, 1);
+	font-family: Arial, sans-serif;
+	text-decoration: none;
+	color: rgba(210, 0, 0, 1);
+	font-weight: bold;
+	text-align: center;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	line-height: 28px;
+	/*text-shadow:
+		-1.5px -1.5px 0 #000,
+		1.5px -1.5px 0 #000,
+		-1.5px 1.5px 0 #000,
+		1.5px 1.5px 0 #000;*/
+}
+.buttons1 a:hover {
+	text-shadow: 0px 0px 6px rgba(235, 0, 0, 1);
+	color: rgba(235, 0, 0, 1);
+	text-decoration: underline;
+}
+
