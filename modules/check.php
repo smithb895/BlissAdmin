@@ -28,6 +28,18 @@ $query->execute(array($_SESSION['login']));
 	$xml = file_get_contents('/items.xml', true);
 	require_once('/modules/xml2array.php');
 	$items_xml = XML2Array::createArray($xml);
+	//var_dump($items_xml);
+	// Fix for lowercase items created by adding items from hive admin page
+	/*function array_map_r( $func, $arr ) {
+		$newArr = array();
+		foreach( $arr as $key => $value ) {
+			$newArr[ $key ] = ( is_array( $value ) ? array_map_r( $func, $value ) : ( is_array($func) ? call_user_func_array($func, $value) : $func( $value ) ) );
+		}
+		return $newArr;
+	}*/
+	//$items_xml = array_map_r('strtolower', $items_xml_case);
+	
+	
 	//print_r($items_xml);
 	//$query = "SELECT * FROM survivor";
 	$countquery = "select count(*) from profile p left join survivor s on p.unique_id = s.unique_id where s.is_dead = 0";
@@ -102,9 +114,18 @@ $query->execute(array($_SESSION['login']));
 			if(array_key_exists($i,$Inventory)){
 				$curitem = $Inventory[$i];
 				if (is_array($curitem)){$curitem = $Inventory[$i][0];}
-				if(!array_key_exists('s'.$curitem,$items_xml['items'])){
+				$items_xml_lowercase = array_change_key_case($items_xml['items'], CASE_LOWER);
+				if(!array_key_exists('s'.strtolower($curitem),$items_xml_lowercase)){
 					$Unknown[] = $curitem;
 				}
+				/*$item_names = array_keys($items_xml['items']);
+				foreach ($item_names as $oneitem) {
+					if (!is_array($oneitem)) {
+						if (strcasecmp('s'.$curitem,$oneitem) != 0) {
+							$Unknown[] = $curitem;
+						}
+					}
+				}*/
 			}
 		}
 		
@@ -159,12 +180,12 @@ $query->execute(array($_SESSION['login']));
 			if ($itemscount>0){
 			?>
 				<div id="message-red">
-				<table border="0" width="100%" cellpadding="0" cellspacing="0">
-				<tr>
-					<td class="red-left">WARNING! <?php echo $itemscount;?> unknown items found!</td>
-					<td class="red-right"><a class="close-red"><img src="<?php echo $path;?>images/table/icon_close_red.gif"   alt="" /></a></td>
-				</tr>
-				</table>
+					<table border="0" width="100%" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="red-left">WARNING! <?php echo $itemscount;?> unknown items found!</td>
+						<td class="red-right"><a class="close-red"><img src="<?php echo $path;?>images/table/icon_close_red.gif"   alt="" /></a></td>
+					</tr>
+					</table>
 				</div>			
 			<!--  end message-red -->
 			<!--  start product-table ..................................................................................... -->
@@ -184,9 +205,18 @@ $query->execute(array($_SESSION['login']));
 				<!--  end product-table................................... --> 
 
 			<?php
-			}
+			} else {
 			?>
+				<div id="message-red">
+					<table border="0" width="100%" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="red-left">No unknown items found!</td>
+						<td class="red-right"><a class="close-red"><img src="<?php echo $path;?>images/table/icon_close_red.gif"   alt="" /></a></td>
+					</tr>
+					</table>
+				</div>				
 			</div>
+			<?php } ?>
 			<!--  end content-table  -->					
 			
 			<div class="clear"></div>
