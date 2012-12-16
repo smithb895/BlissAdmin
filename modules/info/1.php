@@ -50,6 +50,9 @@ while ($row=mysql_fetch_array($res)) {
 			$curitem = $Inventory[$i];
 			$icount = "";
 			if (is_array($curitem)){$curitem = $Inventory[$i][0]; $icount = ' - '.$Inventory[$i][1].' rounds'; }
+			if (strlen($curitem) < 1) {
+				$curitem = 'nullitem';
+			}			
 			if(array_key_exists('s'.$curitem,$items_xml['items'])){
 				switch($items_xml['items']['s'.$curitem]['Type']){
 					case 'binocular':
