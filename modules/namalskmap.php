@@ -137,13 +137,13 @@ if (isset($_SESSION['user_id']))
 	function pollMarkers() {
 	//$.getJSON('positions.php?type=<?php echo $_GET['show'].'&instance_id='.$iid; ?>', function(markers) {
 	var _query = 'positions.php?type=' + '<?php echo $_GET['show']; ?>' + '&instance_id=' + '<?php echo $_GET['instance_id']; ?>';
-	console.log(_query);
+	//console.log(_query);
 	$.getJSON(_query, function(markers) {
 		var map = LingorMap._map;
 		map.clearMarkers();
 		for (i = 0; i < markers.length; i++) { 
-			var lng = ((markers[i][2]/39) - pixelOrigin_.x) / pixelsPerLonDegree_;
-			var latRadians = (((markers[i][3])/44.7) - pixelOrigin_.y) / pixelsPerLonRadian_;
+			var lng = ((markers[i][2]/64.6) - pixelOrigin_.x) / pixelsPerLonDegree_;
+			var latRadians = (((markers[i][3])/46.7) - pixelOrigin_.y) / pixelsPerLonRadian_;
 			var lat = radiansToDegrees(2 * Math.atan(Math.exp(latRadians)) - Math.PI / 2);
 						
 			marker = new google.maps.Marker({
@@ -176,7 +176,7 @@ if (isset($_SESSION['user_id']))
 
         Demo.ImgMapType.prototype.tileSize = new google.maps.Size(256, 256);
         Demo.ImgMapType.prototype.minZoom = 2;
-        Demo.ImgMapType.prototype.maxZoom = 6;
+        Demo.ImgMapType.prototype.maxZoom = 5;
 
         Demo.ImgMapType.prototype.getTile = function (coord, zoom, ownerDocument) {
             var tilesCount = Math.pow(2, zoom);
