@@ -45,10 +45,14 @@ if (isset($_SESSION['user_id']))
 	<div class="right">
 		<h2>Database Cleanup</h2>
 		<br />
+		<div class="buttons1">
+			<a href="" id="clean_vehicles_btn" alt="Remove fully damaged vehicles">Delete Damaged Vehicles</a><br />
+			<a href="" id="clean_wires_btn" alt="Remove wire fencing">Delete Wire Fencing</a><br />
+			<a href="" id="clean_tents_btn" alt="Remove empty tents">Delete Empty Tents</a><br />
+			<a href="" id="clear_all_vehicles_btn" alt="Remove all vehicles">Delete All Vehicles</a><br />
+		</div>
 		<br />
 		<br />
-	</div>
-	<div class="centered">
 		<h2>Database Stats</h2>
 		<br />
 		<br />
