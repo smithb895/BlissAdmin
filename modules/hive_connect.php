@@ -8,7 +8,11 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 //function hiveconnect($hive_address,$hive_db,$hive_user,$hive_pass) {
-$dbhandle = new PDO("mysql:host=$hostname;dbname=$dbName", $username, $password);
+try {
+	$dbhandle = new PDO("mysql:host=$hostname;dbname=$dbName", $username, $password);
+} catch (PDOException $err) {
+	die($err->getMessage());
+}
 //return $dbhandle;
 //}
 
