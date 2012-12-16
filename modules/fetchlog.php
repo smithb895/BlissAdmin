@@ -24,7 +24,9 @@ echo $return;
 
 function read_file($file, $lines) {
     //global $fsize;
-    $handle = fopen($file, "r");
+    if (!$handle = fopen($file, "r")) {
+		die('Error reading server_console.log');
+	}
     $linecounter = $lines;
     $pos = -2;
     $beginning = false;
