@@ -7,6 +7,7 @@ Fix:
 -dashboard playerlist for delta server (sometimes the list disappears after refreshing once?)
 -Need to test (and maybe fix) Ban/Kick/Delete player buttons in the table rows
 -add local log file support for other servers (add to DayZ_Servers PHP class)
+-Replace any remaining mysql_ functions with PDO equivalents
 
 Add:
 -cleanup hive options, database admin page
