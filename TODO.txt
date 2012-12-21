@@ -3,16 +3,28 @@ TODO List
 By: Anzu
 ==========
 Fix:
--Map (regen tiles?  total tile image may be too small) (also, need to tweak JS in namalskmap.php)
+-Namalsk Map (regen tiles?  total tile image may be too small) (also, need to tweak JS in namalskmap.php)
 -dashboard playerlist for delta server (sometimes the list disappears after refreshing once?)
 -Need to test (and maybe fix) Ban/Kick/Delete player buttons in the table rows
--
+-add local log file support for other servers (add to DayZ_Servers PHP class)
 
 Add:
 -cleanup hive options, database admin page
 -Add Ban/Kick/Msg player to playerlist rows on dashboard
+-Add columns to dashboard tables to show:
+  -players profile start time
+	-Z-coord
+	-total deaths/kills/murders/etc
+-Scripts log notifier (notify on abnormal scripts logged, maybe something similar to Item Check page?)
 -kool features :)
 
+Larger Projects:
+-bans database (add/remove/search/sync bans.txt on separate servers from one web interface)
+-multi-tiered admin pages
+	-certain admins only able to edit their own gear
+	-page for regular players to search stats, etc
+-AWG HIVE stats page for main website (most-wanted, oldest, most humanity,etc)
+-an EFFICIENT web-based AJAX log streamer
 
 
 
@@ -22,6 +34,8 @@ Done:
 +Got Namalsk map semi-working
 +lots of things i forgot
 +Added anti-bruteforce for login
+
+
 
 
 
