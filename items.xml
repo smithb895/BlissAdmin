@@ -282,6 +282,14 @@
         <Type>smallammo</Type>
         <Slots>1</Slots>
     </sFlareWhite_M203>
+	<sFlareWhite_GP25>
+        <Type>smallammo</Type>
+        <Slots>1</Slots>
+    </sFlareWhite_GP25>
+	<sFlareRed_GP25>
+        <Type>smallammo</Type>
+        <Slots>1</Slots>
+    </sFlareRed_GP25>
     <sFN_FAL>
         <Type>rifle</Type>
         <Slots>10</Slots>
@@ -766,22 +774,10 @@
 		<Type>item</Type>
 		<Slots>1</Slots>
 	</sBrokenItemGPS>
-	<snsw_er7s>
-		<Type>rifle</Type>
-		<Slots>10</Slots>
-	</snsw_er7s>
-	<snsw_er7a>
-		<Type>rifle</Type>
-		<Slots>10</Slots>
-	</snsw_er7a>
 	<sBrokenNVGoggles>
 		<Type>binocular</Type>
 		<Slots>1</Slots>
 	</sBrokenNVGoggles>
-	<snsw_er7mm>
-		<Type>heavyammo</Type>
-		<Slots>1</Slots>
-	</snsw_er7mm>
 	<s30Rnd_9x19_UZI_SD>
 		<Type>smallammo</Type>
 		<Slots>1</Slots>
@@ -802,6 +798,10 @@
 		<Type>heavyammo</Type>
 		<Slots>1</Slots>
 	</sAPSI>
+	<s64Rnd_9x19_Bizon>
+		<Type>heavyammo</Type>
+		<Slots>1</Slots>
+	</s64Rnd_9x19_Bizon>
 	<sKSVK_DZN>
 		<Type>rifle</Type>
 		<Slots>10</Slots>
@@ -858,4 +858,36 @@
 		<Type>rifle</Type>
 		<Slots>10</Slots>
 	</sG36a>
+	<sbizon>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sbizon>
+	<sG36A_camo>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sG36A_camo>
+	<sAKS_74_pso>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sAKS_74_pso>
+	<sAKS_Gold>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sAKS_Gold>
+	<sAK_107_pso>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sAK_107_pso>
+	<sM24_des_EP1>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sM24_des_EP1>
+	<sG36K_camo>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sG36K_camo>
+	<sG36_C_SD_camo>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sG36_C_SD_camo>
 </items>
