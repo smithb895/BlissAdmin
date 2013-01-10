@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!--<script src="js/jquery.min.js" type="text/javascript"></script>-->
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors',1);
+//error_reporting(E_ALL);
+//ini_set('display_errors',1);
 
 //require('session.php');
 session_start();
@@ -53,7 +53,7 @@ if (isset($_SESSION['user_id']))
 		$show = 0;
 	}
 	if (isset($_GET['instance_id'])) {
-		$_current_instance = preg_replace('#[0-9]#', '', $_GET['instance_id']);
+		$_current_instance = preg_replace('#[^0-9]#', '', $_GET['instance_id']);
 
 		foreach ($DayZ_Servers as $server) {
 			if ($_current_instance == $server->getMissionInstance()) {
