@@ -13,7 +13,7 @@ Add:
 -cleanup hive options, database admin page
 -Add Ban/Kick/Msg player to playerlist rows on dashboard
 -Add columns to dashboard tables to show:
-  -players profile start time
+	-players profile start time
 	-Z-coord
 	-total deaths/kills/murders/etc
 -Scripts log notifier (notify on abnormal scripts logged, maybe something similar to Item Check page?)
@@ -35,8 +35,6 @@ Done:
 +Got Namalsk map semi-working
 +lots of things i forgot
 +Added anti-bruteforce for login
-
-
 
 
 
