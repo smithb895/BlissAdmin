@@ -1,18 +1,32 @@
 <?php
 $cid = '';
 if (isset($_GET['cid'])){
-	$cid = " AND id ='".$_GET['cid']."'";
+	$cid_safe = preg_replace('#[^0-9a-z_+]#i', '', $_GET['cid']);  // Always a good idea to sanitize GET values ;)
+	$cid = " AND id ='".$cid_safe."'";
 }
+$id_safe = preg_replace('#[^0-9a-z+]#i', '', $_GET["id"]);
+$id_cid = $id_safe.$cid;
+
+$querySurvivorInfo = $dbhandle->prepare("SELECT * FROM survivor WHERE unique_id LIKE ? AND is_dead=0 LIMIT 1");
+$querySurvivorInfo->execute(array($id_cid));
+
+$queryProfileInfo = $dbhandle->prepare("SELECT * FROM profile WHERE unique_id LIKE ? LIMIT 1");
+$queryProfileInfo->execute(array($id_safe));
+$rowname = $queryProfileInfo->fetch(PDO::FETCH_ASSOC);
+
+// Deprecated mysql_ methods...
+/*
 $query = "SELECT * FROM survivor WHERE unique_id like ".$_GET["id"].$cid." AND is_dead=0 LIMIT 1"; 
 $res = mysql_query($query) or die(mysql_error());
-$number = mysql_num_rows($res);
+$number = mysql_num_rows($res); // What's the point of this if LIMIT 1?
 
 $queryname = "SELECT * FROM profile WHERE unique_id like ".$_GET["id"]." LIMIT 1";		
 $resname = mysql_query($queryname) or die(mysql_error());
 $rowname = mysql_fetch_array($resname);
+*/
 
-while ($row=mysql_fetch_array($res)) {
-
+//while ($row=mysql_fetch_array($res)) {
+while ($row = $querySurvivorInfo->fetch(PDO::FETCH_ASSOC)) {
 	
 	$Worldspace = str_replace("[", "", $row['worldspace']);
 	$Worldspace = str_replace("]", "", $Worldspace);
