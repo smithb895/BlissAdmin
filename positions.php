@@ -22,7 +22,8 @@ if (isset($_SESSION['user_id'])) {
 		foreach ($DayZ_Servers as $server) {
 			$_serveriid = $server->getMissionInstance();
 			if ($_current_instance == $_serveriid) {
-				$iid = $server->getMissionInstance();
+				//$iid = $server->getMissionInstance();
+				$iid = $_serveriid;
 				$serverip = $server->getServerIP();
 				$serverport = $server->getServerPort();
 				$rconpassword = $server->getRconPassword();

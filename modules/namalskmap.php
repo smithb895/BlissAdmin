@@ -143,7 +143,7 @@ if (isset($_SESSION['user_id']))
 		map.clearMarkers();
 		for (i = 0; i < markers.length; i++) { 
 			var lng = ((markers[i][2]/64.6) - pixelOrigin_.x) / pixelsPerLonDegree_;
-			var latRadians = (((markers[i][3])/46.7) - pixelOrigin_.y) / pixelsPerLonRadian_;
+			var latRadians = (((markers[i][3])/46) - pixelOrigin_.y) / pixelsPerLonRadian_;
 			var lat = radiansToDegrees(2 * Math.atan(Math.exp(latRadians)) - Math.PI / 2);
 						
 			marker = new google.maps.Marker({
