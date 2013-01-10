@@ -18,8 +18,8 @@ if (isset($_SESSION['user_id']))
 
 <div id="main-page-content">
 	<div class="left">
-		<h2>Import Vehicle Spawns from mission.sqm</h2>
-		<p>Here you can upload a mission.sqm that was created in the mission editor, and it will insert all vehicles placed in the mission editor into the HIVE.  Make sure you ONLY place vehicles in the mission.sqm and NOTHING ELSE!</p>
+		<h2>Import Vehicle Spawns</h2>
+		<p>Here you can upload a mission.sqm that was created in the mission editor, and it will insert all vehicles placed in the mission editor into the HIVE.  Make sure you <b>ONLY</b> place vehicles in the mission.sqm and NOTHING ELSE!</p>
 		<br />
 		<form enctype="multipart/form-data" action="modules/uploader.php" method="POST">
 			Choose Map: 
@@ -29,6 +29,8 @@ if (isset($_SESSION['user_id']))
 			&nbsp;&nbsp;&nbsp;<input type="radio" name="worldID"  value="2" /> Lingor
 			<br />
 			&nbsp;&nbsp;&nbsp;<input type="radio" name="worldID"  value="8" /> Namalsk
+			<br />
+			&nbsp;&nbsp;&nbsp;<input type="radio" name="worldID"  value="10" /> Taviana
 			<br />
 			<br />
 			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
