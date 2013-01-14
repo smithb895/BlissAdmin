@@ -17,6 +17,7 @@ Add:
 	-Z-coord
 	-total deaths/kills/murders/etc
 -Scripts log notifier (notify on abnormal scripts logged, maybe something similar to Item Check page?)
+-Create in-page popup div for gear selection for both player gear select and VIP gear select
 -kool features :)
 
 Larger Projects:
@@ -36,5 +37,12 @@ Done:
 +lots of things i forgot
 +Added anti-bruteforce for login
 
+Convert mysql functions to PDO:
+Done:
+	index.php
+	admin.php
+	positions.php
+	modules/actions.php
+	search.php
 
 
