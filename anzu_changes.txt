@@ -1,8 +1,0 @@
-Convert mysql functions to PDO:
-Done:
-	index.php
-	admin.php
-	positions.php
-	modules/actions.php
-	search.php
-
