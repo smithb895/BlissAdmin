@@ -61,6 +61,18 @@ if (isset($_SESSION['user_id']))
 								<td></td>
 							</tr>
 							<tr>
+								<th valign="top">Tier:</th>
+								<td>
+									<select class="inp-form" id="tier" name="tier" form="regform">
+										<option value="4">4 (Player Info Read Only)</option>
+										<option value="3">3 (Player Info Read + Maps)</option>
+										<option value="2">2 (Modify Players + Maps)</option>
+										<option value="1">1 (Full Admin)</option>
+									</select>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
 								<th>&nbsp;</th>
 								<td valign="top">
 									<input type="submit" value="" class="form-submit" />
@@ -83,6 +95,7 @@ if (isset($_SESSION['user_id']))
 							var $form = $( this ),
 								term = $form.find( 'input[name="login"]' ).val(),
 								term2 = $form.find( 'input[name="password"]' ).val(),
+								term3 = $("#tier").val(),
 								url = $form.attr( 'action' );
 								
 							var d = document.getElementById('content-table-inner');
@@ -94,7 +107,7 @@ if (isset($_SESSION['user_id']))
 							d.removeChild(olddiv);
 
 							/* Send the data using post and put the results in a div */
-							$.post( url, { login: term, password: term2 },
+							$.post( url, { login: term, password: term2, tier: term3 },
 							  function( data ) {
 								  var content = $( data ).find( '#content' );
 								  $( "#result" ).empty().append( content );
@@ -121,23 +134,53 @@ if (isset($_SESSION['user_id']))
 		{
 			// обрабатывае пришедшие данные функцией mysql_real_escape_string перед вставкой в таблицу БД
 			
-			$login = (isset($_POST['login'])) ? mysql_real_escape_string($_POST['login']) : '';
-			$password = (isset($_POST['password'])) ? mysql_real_escape_string($_POST['password']) : '';
-			
-			// проверяем на наличие ошибок (например, длина логина и пароля)
-			
+			$login = '';
+			$password = '';
 			$error = false;
 			$errort = '';
-			
-			if (strlen($login) < 2)
-			{
-				$error = true;
-				$errort .= 'Login must be at least 2х characters.<br />';
+			if (isset($_POST['login'])) {
+				$login = $_POST['login'];
 			}
-			if (strlen($password) < 6)
+			if (isset($_POST['password'])) {
+				$password = $_POST['password'];
+			}
+			if (isset($_POST['tier'])) {
+				$tier = $_POST['tier'];
+			} else {
+				//$error = true;
+				//$errot .= 'No tier specified';
+				$tier = '';
+			}
+			
+			// Sanitize user input
+			if (preg_match('#[^0-9a-z_\-@()\.,~\!\+\$+]#i', $login)) {
+				$error = true;
+				$errort .= 'Invalid character in username.<br />';
+			}
+			if (preg_match('#[^0-9a-z_\-@()\.,~\!\+\$+]#i', $password)) {
+				$error = true;
+				$errort .= 'Invalid character in password.<br />';
+			}
+			if (preg_match('#[^0-9+]#', $tier)) {
+				$error = true;
+				$errort .= 'Invalid character in tier.<br />';
+			}
+			
+			//$login = (isset($_POST['login'])) ? mysql_real_escape_string($_POST['login']) : '';
+			//$password = (isset($_POST['password'])) ? mysql_real_escape_string($_POST['password']) : '';
+			
+			
+			// проверяем на наличие ошибок (например, длина логина и пароля)
+						
+			if (strlen($login) < 3)
 			{
 				$error = true;
-				$errort .= 'Password must be at least 6 characters.<br />';
+				$errort .= 'Login must be at least 3 characters.<br />';
+			}
+			if (strlen($password) < 8)
+			{
+				$error = true;
+				$errort .= 'Password must be at least 8 characters.<br />';
 			}
 			
 			// проверяем, если юзер в таблице с таким же логином
@@ -150,13 +193,13 @@ if (isset($_SESSION['user_id']))
 			*/
 			$query = $dbhandle2->prepare("SELECT `id` FROM `hive_admins` WHERE `hive_user`=? LIMIT 1");
 			$query->execute(array($login));
-			$row = $query->fetch(PDO::FETCH_ASSOC);
+			$userexist = $query->fetchColumn();
 			//if (mysql_num_rows($sql)==1)
-			//if (count($row) == 1)
-			//{
-			//	$error = true;
-			//	$errort .= 'Login already used.<br />';
-			//}
+			if ($userexist > 0) {
+				$error = true;
+				$errort .= 'Login already used.<br />';
+			}
+			//print_r($row);
 			
 			// если ошибок нет, то добавляем юзаре в таблицу
 			if (!$error)
@@ -178,14 +221,14 @@ if (isset($_SESSION['user_id']))
 								`tier`=2";
 				$sql = mysql_query($query) or die(mysql_error());
 				*/
-				$query = $dbhandle2->prepare("INSERT INTO `hive_admins` SET `hive_user`=?,`hive_password`=?,`salt`=?,`salt2`=?,`tier`=2");
-				$query->execute(array($login,$hashed_password,$salt,$salt2));
+				$query = $dbhandle2->prepare("INSERT INTO `hive_admins` SET `hive_user`=?,`hive_password`=?,`salt`=?,`salt2`=?,`tier`=?");
+				$query->execute(array($login,$hashed_password,$salt,$salt2,$tier));
 
 				//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('REGISTER ADMIN: {$login}','{$_SESSION['login']}',NOW())";
 				//$sql2 = mysql_query($query) or die(mysql_error());
 				
-				$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('REGISTER ADMIN: ?',?,NOW())");
-				$query->execute(array($login,$_SESSION['login']));
+				$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES (?,?,NOW())");
+				$query->execute(array('REGISTER ADMIN: '.$login,$_SESSION['login']));
 				?>
 				<!--  start message-green -->
 				<div id="msg">
@@ -209,7 +252,7 @@ if (isset($_SESSION['user_id']))
 					<table border="0" width="100%" cellpadding="0" cellspacing="0">
 					<tr>
 						<td class="red-left">Error in registration process!</td>
-						<td class="red-right"><a href="#" onclick="window.location.href = 'admin.php?view=admin';" class="close-red"><img src="<?echo $path;?>images/table/icon_close_red.gif" alt="" /></a></td>
+						<td class="red-right"><a href="#" onclick="window.location.href = 'admin.php?view=admin';" class="close-red"><img src="<?php echo $path;?>images/table/icon_close_red.gif" alt="" /></a></td>
 					</tr>
 					</table>
 					</div>

@@ -1,4 +1,11 @@
 <?php
+//Set no caching
+/*header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");*/
+
 if (isset($_SESSION['user_id']))
 {
 	include_once('/modules/login_connect.php');
@@ -9,12 +16,15 @@ if (isset($_SESSION['user_id']))
 		//include_once('/modules/login_connect.php');
 		if (isset($_POST["user"])){
 			$aDoor = $_POST["user"];
+			//print_r($aDoor);
 			$N = count($aDoor);
+			//echo "<br />";
+			//echo $N;
 			for($i=0; $i < $N; $i++)
 			{
 				//$query = "SELECT * FROM hive_admins WHERE id = ".$aDoor[$i].""; 
 				//$res2 = mysql_query($query) or die(mysql_error());
-				$query = $dbhandle2->prepare("SELECT * FROM hive_admins WHERE id=?");
+				$query = $dbhandle2->prepare("SELECT hive_user FROM hive_admins WHERE id=?");
 				$query->execute(array($aDoor[$i]));
 				//while ($row2=mysql_fetch_array($res2)) {
 				while ($row2=$query->fetch()) {
@@ -23,10 +33,11 @@ if (isset($_SESSION['user_id']))
 					//$query = "DELETE FROM `hive_admins` WHERE id='".$aDoor[$i]."'";
 					//$sql2 = mysql_query($query) or die(mysql_error());
 					
-					$query2 = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('DELETE ADMIN: ?',?,NOW())");
-					$query2->execute(array($row2['login'],$_SESSION['login']));
+					$query2 = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES (?,?,NOW())");
+					$query2->execute(array('DELETE ADMIN: '.$row2['login'],$_SESSION['login']));
 					$query3 = $dbhandle2->prepare("DELETE FROM `hive_admins` WHERE id=?");
 					$query3->execute(array($aDoor[$i]));
+					//echo $aDoor[$i];
 					
 					$delresult .= '<div id="message-green">
 					<table border="0" width="100%" cellpadding="0" cellspacing="0">
@@ -45,13 +56,20 @@ if (isset($_SESSION['user_id']))
 		//$query = "SELECT * FROM hive_admins ORDER BY id ASC"; 
 		//$res = mysql_query($query) or die(mysql_error());
 		//$number = mysql_num_rows($res);
-		$query = $dbhandle2->prepare("SELECT * FROM hive_admins ORDER BY id ASC");
+		$query = $dbhandle2->prepare("SELECT id,hive_user,tier,lastlogin,locked,failed_attempts FROM hive_admins ORDER BY id ASC");
 		$query->execute();
 		
 		$users="";
 		//while ($row=mysql_fetch_array($res)) {
 		while ($row=$query->fetch()) {
-			$users .= "<tr><td><input name=\"user[]\" value=\"".$row['id']."\" type=\"checkbox\"/></td><td>".$row['id']."</td><td>".$row['hive_user']."</td><td>".$row['lastlogin']."</td></tr>";
+			$users .= "<tr>
+						<td><input name=\"user[]\" value=\"".$row['id']."\" type=\"checkbox\"/></td>
+						<td>".$row['id']."</td>
+						<td>".$row['hive_user']."</td>
+						<td>".$row['tier']."</td>
+						<td>".$row['locked']."</td>
+						<td>".$row['lastlogin']."</td>
+					</tr>";
 		}
 		
 		//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('MANAGE ADMINS','{$_SESSION['login']}',NOW())";
@@ -115,7 +133,9 @@ if (isset($_SESSION['user_id']))
 				<tr>
 					<th class="table-header-repeat line-left"><a href="">Delete</a></th>
 					<th class="table-header-repeat line-left" width="5%"><a href="">Id</a>	</th>
-					<th class="table-header-repeat line-left minwidth-1" width="75%"><a href="">Login</a></th>
+					<th class="table-header-repeat line-left minwidth-1" width="65%"><a href="">Login</a></th>
+					<th class="table-header-repeat line-left" width="5%"><a href="">Tier</a></th>
+					<th class="table-header-repeat line-left" width="5%"><a href="">Locked</a></th>
 					<th class="table-header-repeat line-left minwidth-1" width="20%"><a href="">Last access</a></th>
 				</tr>
 				<?php echo $users; ?>				
