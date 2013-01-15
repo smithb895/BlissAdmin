@@ -156,6 +156,15 @@ if (isset($_SESSION['user_id']))
 			if (preg_match('#[^0-9a-z_\-@()\.,~\!\+\$+]#i', $login)) {
 				$error = true;
 				$errort .= 'Invalid character in username.<br />';
+			} else {
+				$query = $dbhandle2->prepare("SELECT `id` FROM `hive_admins` WHERE `hive_user`=? LIMIT 1");
+				$query->execute(array($login));
+				$userexist = $query->fetchColumn();
+				//if (mysql_num_rows($sql)==1)
+				if ($userexist > 0) {
+					$error = true;
+					$errort .= 'Login already used.<br />';
+				}
 			}
 			if (preg_match('#[^0-9a-z_\-@()\.,~\!\+\$+]#i', $password)) {
 				$error = true;
@@ -191,14 +200,7 @@ if (isset($_SESSION['user_id']))
 						LIMIT 1";
 			$sql = mysql_query($query) or die(mysql_error());
 			*/
-			$query = $dbhandle2->prepare("SELECT `id` FROM `hive_admins` WHERE `hive_user`=? LIMIT 1");
-			$query->execute(array($login));
-			$userexist = $query->fetchColumn();
-			//if (mysql_num_rows($sql)==1)
-			if ($userexist > 0) {
-				$error = true;
-				$errort .= 'Login already used.<br />';
-			}
+			
 			//print_r($row);
 			
 			// если ошибок нет, то добавляем юзаре в таблицу
