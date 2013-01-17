@@ -1,14 +1,12 @@
 <?php
 $cid = '';
 if (isset($_GET['cid'])){
-	$cid_safe = preg_replace('#[^0-9a-z_+]#i', '', $_GET['cid']);  // Always a good idea to sanitize GET values ;)
-	$cid = " AND id ='".$cid_safe."'";
+	$cid = preg_replace('#[^0-9a-z_+]#i', '', $_GET['cid']);  // Always a good idea to sanitize GET values ;)
 }
 $id_safe = preg_replace('#[^0-9a-z+]#i', '', $_GET["id"]);
-$id_cid = $id_safe.$cid;
 
-$querySurvivorInfo = $dbhandle->prepare("SELECT * FROM survivor WHERE unique_id LIKE ? AND is_dead=0 LIMIT 1");
-$querySurvivorInfo->execute(array($id_cid));
+$querySurvivorInfo = $dbhandle->prepare("SELECT * FROM survivor WHERE id=? AND is_dead=0 LIMIT 1");
+$querySurvivorInfo->execute(array($cid));
 
 $queryProfileInfo = $dbhandle->prepare("SELECT * FROM profile WHERE unique_id LIKE ? LIMIT 1");
 $queryProfileInfo->execute(array($id_safe));
@@ -27,7 +25,6 @@ $rowname = mysql_fetch_array($resname);
 
 //while ($row=mysql_fetch_array($res)) {
 while ($row = $querySurvivorInfo->fetch(PDO::FETCH_ASSOC)) {
-	
 	$Worldspace = str_replace("[", "", $row['worldspace']);
 	$Worldspace = str_replace("]", "", $Worldspace);
 	$Worldspace = explode(",", $Worldspace);
