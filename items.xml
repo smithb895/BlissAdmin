@@ -890,4 +890,28 @@
 		<Type>rifle</Type>
 		<Slots>10</Slots>
 	</sG36_C_SD_camo>
+	<sM4SPR>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sM4SPR>
+	<sksvk>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sksvk>
+	<sM40A3>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sM40A3>
+	<sBAF_L85A2_RIS_Holo>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sBAF_L85A2_RIS_Holo>
+	<sm240_scoped_EP1>
+		<Type>rifle</Type>
+		<Slots>10</Slots>
+	</sm240_scoped_EP1>
+	<s5Rnd_86x70_L115A1>
+		<Type>heavyammo</Type>
+		<Slots>1</Slots>
+	</s5Rnd_86x70_L115A1>
 </items>
