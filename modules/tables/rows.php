@@ -6,6 +6,7 @@ function header_player($show){
 		<th class="table-header-repeat line-left" width="13%"><a href="">Player Name</a></th>
 		<th class="table-header-repeat line-left" width="7%"><a href="">Player UID</a></th>
 		<th class="table-header-repeat line-left" width="10%"><a href="">Position</a></th>
+		<th class="table-header-repeat line-left" width="7%"><a href="">Map</a></th>
 		<th class="table-header-repeat line-left" width="22%"><a href="">Inventory preview</a></th>
 		<th class="table-header-repeat line-left" width="22%"><a href="">Backpack preview</a></th>
 		</tr>';
@@ -30,8 +31,8 @@ function row_player($row){
 	$Worldspace = explode(",", $Worldspace);
 	$x = 0;
 	$y = 0;
-	if(array_key_exists(2,$Worldspace)){$x = $Worldspace[2];}
-	if(array_key_exists(1,$Worldspace)){$y = $Worldspace[1];}
+	if(array_key_exists(2,$Worldspace)){$y = $Worldspace[2];}
+	if(array_key_exists(1,$Worldspace)){$x = $Worldspace[1];}
 	$Inventory = $row['inventory'];
 	$Inventory = str_replace(",", ",", $Inventory);
 	$Inventory  = json_decode($Inventory);
@@ -97,6 +98,9 @@ function row_player($row){
 					$curitem = $Backpack[$i][0]; $icount = ' - '.$Backpack[$i][1].' rounds';
 				}
 			}
+			if (empty($curitem)) {
+				$curitem = "nullitem";
+			}
 			$BackpackPreview .= '<div class="preview_gear_slot" style="margin-top:0px;width:47px;height:47px;"><img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$curitem.'.png" title="'.$curitem.$icount.'" alt="'.$curitem.$icount.'"/></div>';
 		} else {
 			$BackpackPreview .= '<div class="preview_gear_slot" style="margin-top:0px;width:47px;height:47px;"></div>';
@@ -104,11 +108,49 @@ function row_player($row){
 	}
 	$icon = '<img src="images/icons/player'.($row['is_dead'] ? '_dead' : '').'.png" title="" alt=""/>';
 	
+	switch ($row['world_id']) {
+		case '1':
+			$Worldname = 'Chernarus';
+			break;
+		case '2':
+			$Worldname = 'Lingor';
+			break;
+		case '3':
+			$Worldname = 'Utes';
+			break;
+		case '4':
+			$Worldname = 'Takistan';
+			break;
+		case '5':
+			$Worldname = 'Panthera';
+			break;
+		case '6':
+			$Worldname = 'Fallujah';
+			break;
+		case '7':
+			$Worldname = 'Zargabad';
+			break;
+		case '8':
+			$Worldname = 'Namalsk';
+			break;
+		case '9':
+			$Worldname = 'Celle';
+			break;
+		case '10':
+			$Worldname = 'Taviana';
+			break;
+		default:
+			$Worldname = 'Unknown';
+			break;
+	}
+	
+	
 	$tablerow = "<tr>
 		<td align=\"center\" class=\"gear_preview\">".$icon."</td>
 		<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".$row['name']."</a></td>
 		<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".$row['unique_id']."</a></td>
-		<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".sprintf("%03d",round($y/100)).sprintf("%03d",round((154-($x/100))))."</a></td>
+		<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".sprintf("%03d",round($x/100)).sprintf("%03d",round($y/100))."</a></td>
+		<td class='gear_preview'><a href='admin.php?view=".strtolower($Worldname)."map&show=0'>".$Worldname."</td>
 		<td align=\"center\" class=\"gear_preview\">".$InventoryPreview."</td>
 		<td align=\"center\" class=\"gear_preview\">".$BackpackPreview. "</td>
 	</tr>";
@@ -213,7 +255,7 @@ function row_online_player($row, $player){
 				<td align=\"center\" class=\"gear_preview\" style=\"vertical-align:middle;\">".$name."</td>
 				<td align=\"center\" class=\"gear_preview\">".$uid."</td>
 
-				<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".sprintf("%03d",round($y/100)).sprintf("%03d",round((154-($x/100))))."</a></td>
+				<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".sprintf("%03d",round($x/100)).sprintf("%03d",round($y/100))."</a></td>
 				<td align=\"center\" class=\"gear_preview\">".$InventoryPreview."</td>
 				<td align=\"center\" class=\"gear_preview\">".$BackpackPreview."</td>
 				<tr>";
@@ -295,7 +337,7 @@ function row_vehicle($row, $chbox){
 		<td align=\"center\" class=\"gear_preview\" ><a href=\"admin.php?view=info&show=4&id=".$row['id']."\">".$row['class_name']."</a></td>			
 		<td align=\"center\" class=\"gear_preview\" ><a href=\"admin.php?view=info&show=4&id=".$row['id']."\">".$row['id']."</a></td>
 		<td align=\"center\" class=\"gear_preview\" style=\"background-color: rgba(100,".round((255/100)*(100 - ($row['damage']*100))).",0,0.8);\">".substr($row['damage'], 0, 6)."</td>
-		<td align=\"center\" class=\"gear_preview\" ><a href=\"admin.php?view=info&show=4&id=".$row['id']."\">".sprintf("%03d",round($y/100)).sprintf("%03d",round((154-($x/100))))."</a></td>
+		<td align=\"center\" class=\"gear_preview\" ><a href=\"admin.php?view=info&show=4&id=".$row['id']."\">".sprintf("%03d",round($x/100)).sprintf("%03d",round($y/100))."</a></td>
 		<td align=\"center\" class=\"gear_preview\">".$InventoryPreview."</td>
 		<td align=\"center\" class=\"gear_preview\">".$HitpointsPreview. "</td>
 	</tr>";
