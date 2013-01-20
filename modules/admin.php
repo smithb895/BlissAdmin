@@ -60,15 +60,21 @@ if (isset($_SESSION['user_id']))
 		$query->execute();
 		
 		$users="";
-		//while ($row=mysql_fetch_array($res)) {
+		$_count = 1;
 		while ($row=$query->fetch()) {
-			$users .= "<tr>
-						<td><input name=\"user[]\" value=\"".$row['id']."\" type=\"checkbox\"/></td>
-						<td>".$row['id']."</td>
+			$_count++;
+			if ($_count % 2) {
+				$users .= "<tr class='alternate-row'>";
+			} else {
+				$users .= "<tr>";
+			}
+			$users .= "
+						<td class='center-text'><input name=\"user[]\" value=\"".$row['id']."\" type=\"checkbox\"/></td>
+						<td class='center-text'>".$row['id']."</td>
 						<td>".$row['hive_user']."</td>
-						<td>".$row['tier']."</td>
-						<td>".$row['locked']."</td>
-						<td>".$row['lastlogin']."</td>
+						<td class='center-text'>".$row['tier']."</td>
+						<td class='center-text'>".$row['locked']."</td>
+						<td class='center-text'>".$row['lastlogin']."</td>
 					</tr>";
 		}
 		
@@ -96,11 +102,11 @@ if (isset($_SESSION['user_id']))
 	
 	<table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
 	<tr>
-		<th rowspan="3" class="sized"><img src="images/shared/side_shadowleft.jpg" width="20" height="300" alt="" /></th>
+		<th rowspan="3" class="sized"></th>
 		<th class="topleft"></th>
 		<td id="tbl-border-top">&nbsp;</td>
 		<th class="topright"></th>
-		<th rowspan="3" class="sized"><img src="images/shared/side_shadowright.jpg" width="20" height="300" alt="" /></th>
+		<th rowspan="3" class="sized"></th>
 	</tr>
 	<tr>
 		<td id="tbl-border-left"></td>
