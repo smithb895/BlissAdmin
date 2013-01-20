@@ -23,7 +23,7 @@ if (isset($_SESSION['user_id']))
 			<div class="clear">&nbsp;</div>
 		
 			<!--  start account-content -->	
-			<div class="account-content">
+			<!--<div class="account-content">
 			<div class="account-drop-inner">
 				<a href="" id="acc-settings">Settings</a>
 				<div class="clear">&nbsp;</div>
@@ -39,7 +39,7 @@ if (isset($_SESSION['user_id']))
 				<div class="acc-line">&nbsp;</div>
 				<a href="" id="acc-stats">Statistics</a> 
 			</div>
-			</div>
+			</div>-->
 			<!--  end account-content -->
 		
 		</div>
@@ -61,20 +61,27 @@ if (isset($_SESSION['user_id']))
 				</li>
 				<li class="li-users parent root"><span class=" daddy item"><span>View Inventories</span></span>
 					<ul class="level2 parent-users">
-					<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Instance ID:<?php echo $iid?></a>
+					<?php
+						foreach ($DayZ_Servers as $server) {
+							$_servermap = $server->getServerMap();
+							$_serverinstance = $server->getMissionInstance();
+							echo '					
+					<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">ID '.$_serverinstance.' - '.$_servermap.' </a>
 						<ul class="level3 parent-user-manager">
-						<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Players</a>
-							<ul class="level3 parent-user-manager">
-								<li class="li-add-new-user"><a href="admin.php?view=table&show=0" class="class:newarticle item">Online</a></li>
-							</ul>
-						</li>
-						<li class="li-groups parent"><a href="#nogo" class="class:groups daddy item">Vehicles</a>
-							<ul class="level3 parent-groups">
-								<li class="li-add-new-group"><a href="admin.php?view=table&show=4" class="class:newarticle item">Ingame</a></li>
-							</ul>
-						</li>
-					</ul>
-					<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Database</a>
+							<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Players</a>
+								<ul class="level3 parent-user-manager">
+									<li class="li-add-new-user"><a href="admin.php?view=table&show=0&instance='.$_serverinstance.'" class="class:newarticle item">Online</a></li>
+								</ul>
+							</li>
+							<li class="li-groups parent"><a href="#nogo" class="class:groups daddy item">Vehicles</a>
+								<ul class="level3 parent-groups">
+									<li class="li-add-new-group"><a href="admin.php?view=table&show=4&instance='.$_serverinstance.'" class="class:newarticle item">Ingame</a></li>
+								</ul>
+							</li>
+						</ul>';
+						}
+					?>
+					<!--<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Database</a>
 						<ul class="level3 parent-user-manager">
 						<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Players</a>
 							<ul class="level3 parent-user-manager">
@@ -89,8 +96,8 @@ if (isset($_SESSION['user_id']))
 								<li class="li-add-new-group"><a href="admin.php?view=table&show=5" class="class:newarticle item">Spawn locations</a></li>
 							</ul>
 						</li>
-					</ul>
-				</li>
+						</ul>
+					</li>-->
 						<li class="li- separator"><span></span></li>
 						<li class="li-mass-mail-users"><a href="admin.php?view=check" class="class:massmail item">Check items</a></li>
 						<li class="li- separator"><span></span></li>
