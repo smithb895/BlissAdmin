@@ -64,8 +64,8 @@ while ($row = $querySurvivorInfo->fetch(PDO::FETCH_ASSOC)) {
 			if (strlen($curitem) < 1) {
 				$curitem = 'nullitem';
 			}			
-			if(array_key_exists('s'.$curitem,$items_xml['items'])){
-				switch($items_xml['items']['s'.$curitem]['Type']){
+			if(array_key_exists('s'.strtolower($curitem),$items_xml['items'])){
+				switch($items_xml['items']['s'.strtolower($curitem)]['type']){
 					case 'binocular':
 						$binocular[] = '<img style="max-width:78px;max-height:78px;" src="images/thumbs/'.$curitem.'.png" title="'.$curitem.'" alt="'.$curitem.'"/>';
 						break;
@@ -78,7 +78,7 @@ while ($row = $querySurvivorInfo->fetch(PDO::FETCH_ASSOC)) {
 					case 'backpack':
 						break;
 					case 'heavyammo':
-						$heavyammo[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$curitem.'.png" title="'.$curitem.$icount.'" alt="'.$curitem.$icount.'"/>', 'slots' => $items_xml['items']['s'.$curitem]['Slots']);
+						$heavyammo[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$curitem.'.png" title="'.$curitem.$icount.'" alt="'.$curitem.$icount.'"/>', 'slots' => $items_xml['items']['s'.strtolower($curitem)]['slots']);
 						
 						break;
 					case 'smallammo':
@@ -106,11 +106,11 @@ while ($row = $querySurvivorInfo->fetch(PDO::FETCH_ASSOC)) {
 
 	<table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
 	<tr>
-		<th rowspan="3" class="sized"><img src="images/shared/side_shadowleft.jpg" width="20" height="300" alt="" /></th>
+		<th rowspan="3" class="sized"></th>
 		<th class="topleft"></th>
 		<td id="tbl-border-top">&nbsp;</td>
 		<th class="topright"></th>
-		<th rowspan="3" class="sized"><img src="images/shared/side_shadowright.jpg" width="20" height="300" alt="" /></th>
+		<th rowspan="3" class="sized"></th>
 	</tr>
 	<tr>
 		<td id="tbl-border-left"></td>
@@ -270,8 +270,8 @@ while ($row = $querySurvivorInfo->fetch(PDO::FETCH_ASSOC)) {
 						<?php
 							$maxmagazines = 24;
 							$BackpackName = $Backpack[0];
-							if(array_key_exists('s'.$Backpack[0],$items_xml['items'])){
-								$maxmagazines = $items_xml['items']['s'.$Backpack[0]]['maxmagazines'];
+							if(array_key_exists('s'.strtolower($Backpack[0]),$items_xml['items'])){
+								$maxmagazines = $items_xml['items']['s'.strtolower($Backpack[0])]['maxmagazines'];
 							}
 							
 							$bpweapons = array();
@@ -301,27 +301,27 @@ while ($row = $querySurvivorInfo->fetch(PDO::FETCH_ASSOC)) {
 							$backpackitem = array();
 							$bpweapons = array();
 							for ($i=0; $i<count($Backpack); $i++){
-								if(array_key_exists('s'.$Backpack[$i],$items_xml['items'])){
-									switch($items_xml['items']['s'.$Backpack[$i]]['Type']){
+								if(array_key_exists('s'.strtolower($Backpack[$i]),$items_xml['items'])){
+									switch($items_xml['items']['s'.strtolower($Backpack[$i])]['type']){
 										case 'binocular':
-											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.$Backpack[$i]]['Slots']);
+											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.strtolower($Backpack[$i])]['slots']);
 											break;
 										case 'rifle':
-											$bpweapons[] = array('image' => '<img style="max-width:124px;max-height:92px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.$Backpack[$i]]['Slots']);
+											$bpweapons[] = array('image' => '<img style="max-width:124px;max-height:92px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.strtolower($Backpack[$i])]['slots']);
 											break;
 										case 'pistol':
-											$bpweapons[] = array('image' => '<img style="max-width:92px;max-height:92px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.$Backpack[$i]]['Slots']);
+											$bpweapons[] = array('image' => '<img style="max-width:92px;max-height:92px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.strtolower($Backpack[$i])]['slots']);
 											break;
 										case 'backpack':
 											break;
 										case 'heavyammo':
-											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.$Backpack[$i]]['Slots']);
+											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.strtolower($Backpack[$i])]['slots']);
 											break;
 										case 'smallammo':
-											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.$Backpack[$i]]['Slots']);
+											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.strtolower($Backpack[$i])]['slots']);
 											break;
 										case 'item':
-											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.$Backpack[$i]]['Slots']);
+											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$Backpack[$i].'.png" title="'.$Backpack[$i].'" alt="'.$Backpack[$i].'"/>', 'slots' => $items_xml['items']['s'.strtolower($Backpack[$i])]['slots']);
 											break;
 										default:
 											$s = '';

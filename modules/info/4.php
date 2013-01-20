@@ -52,11 +52,11 @@ $owneruid = "";
 
 	<table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
 	<tr>
-		<th rowspan="3" class="sized"><img src="images/shared/side_shadowleft.jpg" width="20" height="300" alt="" /></th>
+		<th rowspan="3" class="sized"></th>
 		<th class="topleft"></th>
 		<td id="tbl-border-top">&nbsp;</td>
 		<th class="topright"></th>
-		<th rowspan="3" class="sized"><img src="images/shared/side_shadowright.jpg" width="20" height="300" alt="" /></th>
+		<th rowspan="3" class="sized"></th>
 	</tr>
 	<tr>
 		<td id="tbl-border-left"></td>
@@ -106,11 +106,11 @@ $owneruid = "";
 							$freeweaps = 0;
 							$freebacks = 0;
 							$BackpackName = $row['class_name'];
-							if(array_key_exists('s'.$row['class_name'],$vehicles_xml['vehicles'])){
-								$maxmagazines = $vehicles_xml['vehicles']['s'.$row['class_name']]['transportmaxmagazines'];
-								$maxweaps = $vehicles_xml['vehicles']['s'.$row['class_name']]['transportmaxweapons'];
-								$maxbacks = $vehicles_xml['vehicles']['s'.$row['class_name']]['transportmaxbackpacks'];
-								$BackpackName = $vehicles_xml['vehicles']['s'.$row['class_name']]['Name'];
+							if(array_key_exists('s'.strtolower($row['class_name']),$vehicles_xml['vehicles'])){
+								$maxmagazines = $vehicles_xml['vehicles']['s'.strtolower($row['class_name'])]['transportmaxmagazines'];
+								$maxweaps = $vehicles_xml['vehicles']['s'.strtolower($row['class_name'])]['transportmaxweapons'];
+								$maxbacks = $vehicles_xml['vehicles']['s'.strtolower($row['class_name'])]['transportmaxbackpacks'];
+								$BackpackName = $vehicles_xml['vehicles']['s'.strtolower($row['class_name'])]['Name'];
 							}
 							if (count($Backpack) >0){
 							$bpweaponscount = count($Backpack[0][0]);
@@ -145,32 +145,32 @@ $owneruid = "";
 							$bpweapons = array();
 							for ($i=0; $i<count($Backpack); $i++){
 								$bp_item = $Backpack[$i];
-								if (strlen($bp_item) < 1) {
+								if (strlen($bp_item) < 2) {
 									$bp_item = 'nullitem';
 								}
-								if(array_key_exists('s'.$bp_item,$items_xml['items'])){
-									switch($items_xml['items']['s'.$bp_item]['Type']){
+								if(array_key_exists('s'.strtolower($bp_item)),$items_xml['items'])){
+									switch($items_xml['items']['s'.strtolower($bp_item]['type']){
 										case 'binocular':
-											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.$bp_item]['Slots']);
+											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.strtolower($bp_item)]['slots']);
 											break;
 										case 'rifle':
-											$bpweapons[] = array('image' => '<img style="max-width:84px;max-height:84px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.$bp_item]['Slots']);
+											$bpweapons[] = array('image' => '<img style="max-width:84px;max-height:84px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.strtolower($bp_item)]['slots']);
 											break;
 										case 'pistol':
-											$bpweapons[] = array('image' => '<img style="max-width:84px;max-height:84px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.$bp_item]['Slots']);
+											$bpweapons[] = array('image' => '<img style="max-width:84px;max-height:84px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.strtolower($bp_item)]['slots']);
 											break;
 										case 'backpack':
-											$bpweapons[] = array('image' => '<img style="max-width:84px;max-height:84px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.$bp_item]['Slots']);
+											$bpweapons[] = array('image' => '<img style="max-width:84px;max-height:84px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.strtolower($bp_item)]['slots']);
 											$freebacks = $freebacks - 1;
 											break;
 										case 'heavyammo':
-											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.$bp_item]['Slots']);
+											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.strtolower($bp_item)]['slots']);
 											break;
 										case 'smallammo':
-											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.$bp_item]['Slots']);
+											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.strtolower($bp_item)]['slots']);
 											break;
 										case 'item':
-											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.$bp_item]['Slots']);
+											$backpackitem[] = array('image' => '<img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$bp_item.'.png" title="'.$bp_item.'" alt="'.$bp_item.'"/>', 'slots' => $items_xml['items']['s'.strtolower($bp_item)]['slots']);
 											break;
 										default:
 											$s = '';
