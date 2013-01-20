@@ -1,11 +1,15 @@
 <?php
+//error_reporting(E_ALL);
+//ini_set('display_errors',1);
 if (isset($_SESSION['user_id']))
 {	
 	//if (isset($_GET["url"])){
+		/*
 		if (isset($_GET["keepalive"])) {
 			$cmd = '';
 			$answer = rcon_keepalive($serverip,$serverport);
 		}
+		*/
 		if (isset($_GET["kick"])){
 			$cmd = "kick ".$_GET["kick"];
 			//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('Player Kicked','{$_SESSION['login']}',NOW())";
@@ -69,21 +73,27 @@ if (isset($_SESSION['user_id']))
 			</script>
 			<?php
 		}
-		if (isset($_GET["deletecheck"])){
-			$todelete = preg_replace('#[0-9]+#', '', $_GET["deletecheck"]);
+		if (isset($_GET["deletecheck"])) {
+			$todelete = preg_replace('#[^0-9+]#', '', $_GET["deletecheck"]);
 			//$remquery = "delete from id using instance_deployable id join survivor s on id.owner_id = s.id where s.id = '".$_GET["deletecheck"]."'";
 			//$result = mysql_query($remquery) or die(mysql_error());
 			//$class = mysql_fetch_assoc($result);
 			//$remquery1 = "Delete FROM survivor WHERE id='".$_GET["deletecheck"]."'";
 			//$result1 = mysql_query($remquery1) or die(mysql_error());
 			//$class1 = mysql_fetch_assoc($result1);
-			$remquery = $dbhandle->prepare("delete from id using instance_deployable id join survivor s on id.owner_id = s.id where s.id=?");
+			$remquery = $dbhandle->prepare("DELETE FROM id USING instance_deployable id JOIN survivor s ON id.owner_id=s.id WHERE s.id=?");
 			$remquery->execute(array($todelete));
-			$remquery1 = $dbhandle->prepare("Delete FROM survivor WHERE id=?");
+			$affected = $remquery->rowCount();
+			$remquery1 = $dbhandle->prepare("DELETE FROM survivor WHERE id=?");
 			$remquery1->execute(array($todelete));
+			$affected1 = $remquery1->rowCount();
+			
+			echo "Deleted $affected deployed items from player.<br />";
+			echo "Deleted $affected1 player records from the survivor table<br />";
+			
 			?>
 			<script type="text/javascript">
-				window.location = 'admin.php?view=check';
+				setTimeout('window.location="admin.php?view=check"',5000);
 			</script>
 			<?php
 		}
