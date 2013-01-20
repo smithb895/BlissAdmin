@@ -15,12 +15,19 @@ if (isset($_SESSION['user_id']))
 		$query2->execute();
 		
 		$vips = '';
+		$_count = 1;
 		while ($row=$query2->fetch(PDO::FETCH_ASSOC)) {
-			$vips .= "<tr>
-						<td><input name=\"vip[]\" value=\"".$row['unique_id']."\" type=\"checkbox\"/></td>
-						<td>".$row['unique_id']."</td>
+			$_count++;
+			if ($_count % 2) {
+				$vips .= "<tr class='alternate-row'>";
+			} else {
+				$vips .= "<tr>";
+			}
+			$vips .= "
+						<td class='center-text'><input name=\"vip[]\" value=\"".$row['unique_id']."\" type=\"checkbox\"/></td>
+						<td class='center-text'>".$row['unique_id']."</td>
 						<td>".$row['name']."</td>
-						<td>".$row['cust_loadout_id']."</td>
+						<td class='center-text'>".$row['cust_loadout_id']."</td>
 						<td>".$row['loadout_name']."</td>
 					</tr>";
 		}
@@ -38,11 +45,11 @@ if (isset($_SESSION['user_id']))
 	</div>
 	<table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
 		<tr>
-			<th rowspan="3" class="sized"><img src="images/shared/side_shadowleft.jpg" width="20" height="300" alt="" /></th>
+			<th rowspan="3" class="sized"></th>
 			<th class="topleft"></th>
 			<td id="tbl-border-top">&nbsp;</td>
 			<th class="topright"></th>
-			<th rowspan="3" class="sized"><img src="images/shared/side_shadowright.jpg" width="20" height="300" alt="" /></th>
+			<th rowspan="3" class="sized"></th>
 		</tr>
 		<tr>
 			<td id="tbl-border-left"></td>
@@ -76,8 +83,8 @@ if (isset($_SESSION['user_id']))
 						<th class="table-header-repeat line-left"><a href="">Delete</a></th>
 						<th class="table-header-repeat line-left" width="10%"><a href="">PlayerID</a></th>
 						<th class="table-header-repeat line-left minwidth-1" width="30%"><a href="">Name</a></th>
-						<th class="table-header-repeat line-left" width="10%"><a href="">Loadout ID</a></th>
-						<th class="table-header-repeat line-left minwidth-1" width="50%"><a href="">Loadout Name</a></th>
+						<th class="table-header-repeat line-left" width="13%"><a href="">Loadout ID</a></th>
+						<th class="table-header-repeat line-left minwidth-1" width="40%"><a href="">Loadout Name</a></th>
 					</tr>
 					<?php echo $vips; ?>				
 					</table>
