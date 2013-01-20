@@ -167,25 +167,30 @@ function row_online_player($row, $player){
 	$Worldspace = str_replace("[", "", $row['worldspace']);
 	$Worldspace = str_replace("]", "", $Worldspace);
 	$Worldspace = explode(",", $Worldspace);					
-	if(array_key_exists(2,$Worldspace)){$x = $Worldspace[2];}
-	if(array_key_exists(1,$Worldspace)){$y = $Worldspace[1];}
+	if(array_key_exists(2,$Worldspace)){$y = $Worldspace[2];}
+	if(array_key_exists(1,$Worldspace)){$x = $Worldspace[1];}
 	$dead = ($row['is_dead'] ? '_dead' : '');
-	$Inventory = $row['inventory'];
-	$Inventory = str_replace("|", ",", $Inventory);
-	$Inventory  = json_decode($Inventory);
-	if(array_key_exists(0,$Inventory)){
-		if(array_key_exists(1,$Inventory)){
-			$Inventory = (array_merge($Inventory[0], $Inventory[1]));
+	
+	$Inventory = array();
+	if (is_array($row['inventory'])) {
+		$Inventory = $row['inventory'];
+		$Inventory = str_replace("|", ",", $Inventory);
+		$Inventory = json_decode($Inventory);
+		if(array_key_exists(0,$Inventory)){
+			if(array_key_exists(1,$Inventory)){
+				$Inventory = (array_merge($Inventory[0], $Inventory[1]));
+			} else {
+				$Inventory = $Inventory[0];
+			}
 		} else {
-			$Inventory = $Inventory[0];
-		}
-	} else {
-		if(array_key_exists(1,$Inventory)){
-			$Inventory = $Inventory[1];
+			if(array_key_exists(1,$Inventory)){
+				$Inventory = $Inventory[1];
+			}
 		}
 	}
 	$InventoryPreview = "";
 	$limit = 6;
+	$pcount = "";
 	for ($p=0; $p< $limit; $p++){
 		if(array_key_exists($p,$Inventory)){
 			$curitem = $Inventory[$p];
@@ -242,8 +247,9 @@ function row_online_player($row, $player){
 			$BackpackPreview .= '<div class="preview_gear_slot" style="margin-top:0px;width:47px;height:47px;"></div>';
 		}			
 	}
-	$name = "<a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."\">".$player[4]."</a>";
-	$uid = "<a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."\">".$row["unique_id"]."</a>";
+	$name = "<a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".$player[4]."</a>";
+	$uid = "<a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".$row["unique_id"]."</a>";
+	$curmap = "<a href='admin.php?view=".$row['worldname']."map&show=0&instance_id=".$row['instance_id']."'>".ucfirst($row['worldname'])."</a>";
 	
 
 	$icon = '<a href="admin.php?view=actions&kick='.$player[0].'"><img src="images/icons/player.png" title="Kick '.$player[4].'" alt="Kick '.$player[4].'"/></a>';
@@ -256,6 +262,7 @@ function row_online_player($row, $player){
 				<td align=\"center\" class=\"gear_preview\">".$uid."</td>
 
 				<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".sprintf("%03d",round($x/100)).sprintf("%03d",round($y/100))."</a></td>
+				<td align=\"center\" class=\"gear_preview\" style=\"vertical-align:middle;\">".$curmap."</td>
 				<td align=\"center\" class=\"gear_preview\">".$InventoryPreview."</td>
 				<td align=\"center\" class=\"gear_preview\">".$BackpackPreview."</td>
 				<tr>";
