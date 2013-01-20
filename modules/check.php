@@ -42,24 +42,26 @@ $query->execute(array($_SESSION['login']));
 	
 	//print_r($items_xml);
 	//$query = "SELECT * FROM survivor";
-	$countquery = "select count(*) from profile p left join survivor s on p.unique_id = s.unique_id where s.is_dead = 0";
-	$query = "select p.name, s.* from profile p left join survivor s on p.unique_id = s.unique_id where s.is_dead = 0";
-	if ($cntres = $dbhandle->query($countquery)) {
+	//$countquery = "SELECT count(*) FROM profile p LEFT JOIN survivor s ON p.unique_id=s.unique_id WHERE s.is_dead=0";
+	$query = "SELECT p.name,s.*,w.name AS worldname,i.id AS instance_id FROM profile p LEFT JOIN survivor s ON p.unique_id=s.unique_id JOIN world w ON w.id=s.world_id JOIN instance i ON w.id=i.world_id WHERE s.is_dead=0";
+	/*if ($cntres = $dbhandle->query($countquery)) {
 		$number = $cntres->fetchColumn();
 		$res = $dbhandle->query($query);
-	}
+	}*/
 	//print_r($res);
 	//$res = mysql_query($query) or die(mysql_error());
 	//$number = mysql_num_rows($res);
 	$rows = null;
 	//$query = $dbhandle->query("select p.name, s.* from profile p left join survivor s on p.unique_id = s.unique_id where s.is_dead = 0");
-	
+	$res = $dbhandle->query($query);
+	$allrows = $res->fetchAll(PDO::FETCH_ASSOC);
+	$number = count($allrows);
 	$itemscount = 0;
 	if ($number == 0) {
 	  echo "<CENTER>Не найдено</CENTER>";
 	} else {
 	  //while ($row=mysql_fetch_array($res)) {
-	  $allrows = $res->fetchAll(PDO::FETCH_ASSOC);
+	  //$allrows = $res->fetchAll(PDO::FETCH_ASSOC);
 	  //while ($row=$res->fetch(PDO::FETCH_ASSOC)) {
 	  foreach ($allrows as $row) {
 		//print_r($row);
@@ -67,6 +69,8 @@ $query->execute(array($_SESSION['login']));
 		$Worldspace = str_replace("]", "", $Worldspace);
 		$Worldspace = str_replace(",", ",", $Worldspace);
 		$Worldspace = explode(",", $Worldspace);
+		
+		$Worldname = ucfirst($row['worldname']);
 		
 		$Inventory = $row['inventory'];	
 		$Inventory = str_replace(",", ",", $Inventory);
@@ -104,18 +108,25 @@ $query->execute(array($_SESSION['login']));
 			for ($mi=0; $mi<$Backpack[2][1][$m]; $mi++){
 				$bpitems[] = $Backpack[2][0][$m];
 			}
+		}
+		if (is_array($bpweapons)) {
+			$Backpack = (array_merge($bpweapons, $bpitems));
+		} else {
+			$Backpack = $bpitems;
+		}
+		if (is_array($Inventory)) {
+			$Inventory = (array_merge($Inventory, $Backpack));
+		} else {
+			$Inventory = $Backpack;
 		}		
-		$Backpack = (array_merge($bpweapons, $bpitems));
-		
-		$Inventory = (array_merge($Inventory, $Backpack));
-		
 							
 		for ($i=0; $i<count($Inventory); $i++){
 			if(array_key_exists($i,$Inventory)){
 				$curitem = $Inventory[$i];
 				if (is_array($curitem)){$curitem = $Inventory[$i][0];}
-				$items_xml_lowercase = array_change_key_case($items_xml['items'], CASE_LOWER);
-				if(!array_key_exists('s'.strtolower($curitem),$items_xml_lowercase)){
+				//$items_xml_lowercase = array_change_key_case($items_xml['items'], CASE_LOWER);
+				if(!array_key_exists('s'.strtolower($curitem),$items_xml['items'])){
+				//if (! (in_array(strtolower($curitem), array_map('strtolower', array_keys($items_xml['items']))))) {
 					$Unknown[] = $curitem;
 				}
 				/*$item_names = array_keys($items_xml['items']);
@@ -141,8 +152,9 @@ $query->execute(array($_SESSION['login']));
 			$rows .= "<tr>
 				<td align=\"center\" class=\"gear_preview\"><a href=\"amin.php?view=actions&deletecheck=".$row['unique_id']."\">".$icon1."</td>
 				<td align=\"center\" class=\"gear_preview\">".$status."</td>
-				<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."\">".$name."</a></td>
-				<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."\">".$row['unique_id']."</a></td>
+				<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".$name."</a></td>
+				<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=info&show=1&id=".$row['unique_id']."&cid=".$row['id']."\">".$row['unique_id']."</a></td>
+				<td align=\"center\" class=\"gear_preview\"><a href=\"admin.php?view=tavianamap&show=0&instance_id=".$row['instance_id']."\">".$Worldname."</a></td>
 				<td align=\"center\" class=\"gear_preview\">";
 				foreach($Unknown as $uitem => $uval)
 				{
@@ -161,11 +173,11 @@ $query->execute(array($_SESSION['login']));
 </div>
 <table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
 	<tr>
-		<th rowspan="3" class="sized"><img src="<?php echo $path;?>images/shared/side_shadowleft.jpg" width="20" height="300" alt="" /></th>
+		<th rowspan="3" class="sized"></th>
 		<th class="topleft"></th>
 		<td id="tbl-border-top">&nbsp;</td>
 		<th class="topright"></th>
-		<th rowspan="3" class="sized"><img src="<?php echo $path;?>images/shared/side_shadowright.jpg" width="20" height="300" alt="" /></th>
+		<th rowspan="3" class="sized"></th>
 	</tr>
 	<tr>
 		<td id="tbl-border-left"></td>
@@ -196,6 +208,7 @@ $query->execute(array($_SESSION['login']));
 					<th class="table-header-repeat line-left minwidth-1" width="5px"><a href="">Player Status</a></th>
 					<th class="table-header-repeat line-left minwidth-1" width="5px"><a href="">Player Name</a>	</th>
 					<th class="table-header-repeat line-left minwidth-1" width="5px"><a href="">Player ID</a></th>
+					<th class="table-header-repeat line-left minwidth-1" width="5px"><a href="">Map</a></th>
 					<th class="table-header-repeat line-left minwidth-1"><a href="">Unknown items</a></th>
 				</tr>
 				<?php
