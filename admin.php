@@ -20,7 +20,7 @@ if (isset($_GET['logout']))
 {
 	require_once('/modules/login_connect.php');
 	$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('LOGOUT',?,NOW())");
-	$query->execute(array($_SESSION['login']));
+	$query->execute(array($_SESSION['user_id']));
 	
 	if (isset($_SESSION['user_id']))
 		unset($_SESSION['user_id']);

@@ -1,11 +1,11 @@
 <?php
 include ('config.php');
 
-	if (isset($_POST['search'])){
-		$pagetitle = "Stats for ".$_POST['search'];
-	} else {
-		$pagetitle = "New search";
-	}
+if (isset($_POST['search'])){
+	$pagetitle = "Stats for ".$_POST['search'];
+} else {
+	$pagetitle = "New search";
+}
 
 mysql_connect($hostname, $username, $password) or die (mysql_error());
 mysql_select_db($dbName) or die (mysql_error());

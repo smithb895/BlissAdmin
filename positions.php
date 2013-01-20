@@ -404,7 +404,7 @@ if (isset($_SESSION['user_id'])) {
 			id.instance_id = '" . $iid . "'";
 			*/
 			$query = $dbhandle->prepare("select s.id,p.name class_name,'Player' as type,s.worldspace,s.model,s.unique_id,s.zombie_kills,s.bandit_kills,s.survivor_kills,s.survival_time from profile p join survivor s on p.unique_id = s.unique_id join world w on s.world_id = w.id join instance i on w.id = i.world_id and i.id = ? where s.is_dead = 0 and s.last_updated > now() - interval 1 minute union select iv.id,v.class_name,oc.type,iv.worldspace,'none' as model,'none' as unique_id,'none' as zombie_kills,'none' as bandit_kills,'none' as survivor_kills,'none' as survival_time from instance_vehicle iv join vehicle v on iv.world_vehicle_id = v.id join object_classes oc on v.class_name = oc.classname where iv.instance_id = ? union select id.id,d.class_name,oc.type,id.worldspace,'none' as model,'none' as unique_id,'none' as zombie_kills,'none' as bandit_kills,'none' as survivor_kills,'none' as survival_time from instance_deployable id join deployable d on id.deployable_id = d.id join object_classes oc on d.class_name = oc.classname where id.instance_id = ?");
-			$result = mysql_query($sql);
+			//$result = mysql_query($sql);
 			$query->execute(array($iid,$iid,$iid));
 			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();
