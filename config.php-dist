@@ -5,24 +5,30 @@ require_once('/modules/dayz_servers.php');
 // ^ DONT CHANGE THE ABOVE ^
 
 // BEGIN SERVER CONFIG
-$sitename = "-={AWG}=- DayZ Administration"; //Admin panel name
+$sitename = "-={AWG}=- DayZ Administration"; 			// Admin panel name
 $localserverlog = 'C:\path\to\logs\server_console.log';	// Full pathname for server_console.log file (OPTIONAL)
-$localbansfile = 'C:\path\to\bans\bans.txt';				// Full pathname for BattlEye bans.txt (OPTIONAL)
+$localbansfile = 'C:\path\to\bans\bans.txt';			// Full pathname for BattlEye bans.txt (OPTIONAL)
 
 // Test Bug Fix?
 $path = '';
 
 // HIVE Connection Info
-$hostname = "127.0.0.1";			// Database host
-$username = "dayz";					// database user
-$password = 'HIVEPasswordGoesHere';		// database password
-$dbName = "dayz";				// database name
+$hostname = "127.0.0.1";					// Database host
+$username = "dayz";							// Database user
+$password = 'HIVEPasswordGoesHere';			// Database password
+$dbName = "dayz";							// Database name
 
 // Credentials DB Connection Info
-$adminsdb_address = '127.0.0.1';	// IP address or hostname of MySQL server storing admin credentials database
+$adminsdb_address = '127.0.0.1';			// IP address or hostname of MySQL server storing admin credentials DB
 $adminsdb_user = 'admin_mysql_user';		// Username for admin credentials DB
 $adminsdb_pass = 'AdminDBPasswordGoesHere';	// Password for admin credentials DB
-$adminsdb_db = 'hive_admins_db';		// Name of admin credentials database
+$adminsdb_db = 'hive_admins_db';			// Name of admin credentials DB
+
+// Bans DB Connection Info
+$bansdb_address = '127.0.0.1';				// IP address or hostname of MySQL server storing bans DB
+$bansdb_user = 'bans_admin';				// Username for bans DB
+$bansdb_pass = 'BansDBPasswordGoesHere';	// Password for bans DB
+$bansdb_db = 'bans';						// Name of bans DB
 	
 //security
 $security = "admin"; // allows you to rename the admin.php file to secure your install **Not Active Yet**
