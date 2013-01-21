@@ -47,21 +47,23 @@ while ($row = $queryAdminLog->fetch(PDO::FETCH_ASSOC)) {
 		<br />
 		<br />
 		<h2>Current Players - <?php echo '<span id="servername">'.$DayZ_Servers[0]->getServerName().'</span> - <span id="servermap">'.$DayZ_Servers[0]->getServerMap().'</span>'; ?></h2>
-		<div id="current-players">
-			<table id="player_data_table">
+		<!--<div id="current-players">-->
+		<div id="table-content">
+			<!--<table id="player_data_table">-->
+			<table id="product-table" class="margin_centered">
 			<thead>
 				<tr id="column_title">
-					<th>Name</th>
-					<th>UID</th>
-					<th>GUID</th>
-					<th>IP</th>
-					<th>Z Kills</th>
-					<th>B Kills</th>
-					<th>P Kills</th>
-					<th>Position</th>
-					<th>Time Alive</th>
-					<th>Last Update</th>
-					<th>Ping</th>
+					<th class="table-header-repeat line-left" width="23%">Name</th>
+					<th class="table-header-repeat line-left" width="7%">UID</th>
+					<th class="table-header-repeat line-left" width="22%">GUID</th>
+					<th class="table-header-repeat line-left" width="10%">IP</th>
+					<th class="table-header-repeat line-left" width="4%">Z Kills</th>
+					<th class="table-header-repeat line-left" width="4%">B Kills</th>
+					<th class="table-header-repeat line-left" width="4%">P Kills</th>
+					<th class="table-header-repeat line-left" width="6%">Position</th>
+					<th class="table-header-repeat line-left" width="5%">Time Alive</th>
+					<th class="table-header-repeat line-left" width="11%">Last Update</th>
+					<th class="table-header-repeat line-left" width="4%">Ping</th>
 				</tr>
 			</thead>
 				<tbody id="player-data-rows"><?php //include('current_players.php'); ?><!-- Current players table, filled by AJAX --></tbody>

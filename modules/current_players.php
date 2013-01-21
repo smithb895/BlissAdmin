@@ -3,7 +3,6 @@
 //ini_set('display_errors',1);
 
 include_once('../config.php');
-//include_once('../config.php');
 include_once('hive_connect.php');
 include_once('rcon.php');
 global $DayZ_Servers;
@@ -11,12 +10,10 @@ global $DayZ_Servers;
 //global $serverport;
 //global $rconpassword;
 
-//$dbhandle = new PDO("mysql:host=$hostname;dbname=$dbName", $username, $password);
 
 if (isset($_POST['selectserver'])) {
 	//$selectserver = preg_replace('#[^0-9]#', '', $_POST['selectserver']);
 	$selectserver = $_POST['selectserver'];
-	//$selectserver = 2;
 	foreach ($DayZ_Servers as $server) {
 		$_instance = $server->getMissionInstance();
 		if ($_instance == $selectserver) {
@@ -31,35 +28,8 @@ if (isset($_POST['selectserver'])) {
 
 $cmd = "Players";
 $answer = rcon($serverip,$serverport,$rconpassword,$cmd);
-//$queryGetPlayerData = $dbhandle->prepare('select * from (SELECT profile.name, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id) as T where name LIKE ? ORDER BY last_updated DESC LIMIT 1');
-$queryGetPlayerData = $dbhandle->prepare('SELECT p.name,s.id,s.unique_id,s.worldspace,s.survivor_kills,s.bandit_kills,s.zombie_kills,s.start_time,s.last_updated FROM profile p, survivor s WHERE p.unique_id = s.unique_id AND p.name LIKE ? ORDER BY s.last_updated DESC LIMIT 1');
-//$queryGetPlayerData = $dbhandle->prepare('SELECT p.name,s.id,s.unique_id,s.worldspace,s.survivor_kills,s.bandit_kills,s.zombie_kills,s.start_time,s.last_updated FROM profile p, survivor s WHERE p.unique_id = s.unique_id AND p.name LIKE ? ORDER BY last_updated DESC LIMIT 1');
+$queryGetPlayerData = $dbhandle->prepare('SELECT p.name,s.id,s.unique_id,s.worldspace,s.survivor_kills,s.bandit_kills,s.zombie_kills,s.start_time,s.last_updated,timestampdiff(hour, s.start_time, s.last_updated) as hours_old FROM profile p, survivor s WHERE p.unique_id = s.unique_id AND p.name LIKE ? ORDER BY s.last_updated DESC LIMIT 1');
 
-
-// '%". str_replace(" ", "%' OR name LIKE '%", $good). "%'
-// $queryParam = '%'.str_replace(" ", "%' OR name LIKE '%", $good).'%';
-// $queryGetPlayerData->execute(array($queryParam));
-
-//echo preg_replace('#((\x42\x45)(.{8}))+#', 'BE_START_PACKET', $answer);
-//echo "<br /><br />";
-/*
-echo '
-			<table id="player_data_table">
-				<tr id="column_title">
-					<th>Name</th>
-					<th>UID</th>
-					<th>GUID</th>
-					<th>IP</th>
-					<th>Z Kills</th>
-					<th>B Kills</th>
-					<th>P Kills</th>
-					<th>Position</th>
-					<th>Time Alive</th>
-					<th>Last Update</th>
-					<th>Ping</th>
-				</tr>
-	';
-*/				
 if ($answer != ""){
 	$k = strrpos($answer, "---");
 	$l = strrpos($answer, "(");
@@ -74,7 +44,6 @@ if ($answer != ""){
 		//echo "$item<br />";
 		//echo preg_replace('#((\x42\x45)(.{10}))+#', '', $item)."<br /><br />";
 	//}
-	//echo "<br />";
 	$players = array();
 	for ($j=0; $j<count($array); $j++){
 		$players[] = "";
@@ -146,25 +115,9 @@ if ($answer != ""){
 				$safe = '%'.$playername.'%';
 			}
 			$queryParam = $safe;
-			/*
-			if (strpos($playername, '%')) {
-				$playername = preg_replace('#(%)$#', '', $playername);
-				$good = preg_replace('#(%)+#', '%" AND name LIKE "%', $playername);
-				$queryParam = '"%'.$good.'%"';
-			} else {
-				$queryParam = '"%'.$playername.'%"';
-			}*/
 			$queryGetPlayerData->execute(array($queryParam));
-			//$queryGetPlayerData->execute(array($queryParam));
-			//echo $queryParam.'<br />';
-			//echo $playername."<br />";
 			$res = $queryGetPlayerData->fetch(PDO::FETCH_ASSOC);
-			//echo "<br />";
-			//var_dump($res);
-			//echo "<br />";
-			//print_r($res);
-			//echo $res['unique_id']."<br />";
-			//echo $res['backpack']."<br />";
+			
 			$player_ip = explode(':',$players[$i][1])[0];
 			$player_guid = preg_replace('#(\(OK\))#', '', $players[$i][3]);
 			$player_ping = $players[$i][2];
@@ -197,12 +150,27 @@ if ($answer != ""){
 			} else {
 				$player_pos = 'unknown';
 			}
-			$player_age = '';
+			
+			$hours_old = $res['hours_old'];
+			$days_old = round(($hours_old / 24), 0);
+			$remainder = round(($hours_old % 24), 0);
+			if ($days_old < 1) {
+				$player_age = "$hours_old hrs";
+			} else {
+				$player_age = "$days_old days";
+				if ($remainder > 0) {
+					$player_age .= "<br />$remainder hrs";
+				}
+			}
+		}
+		if ($i % 2) {
+			echo '<tr class="alternate-row">';
+		} else {
+			echo '<tr>';
 		}
 		echo '
-			<tr>
-				<td><a href="admin.php?view=info&show=1&id='.$res['unique_id'].'" alt=View player info>'.$playername.'</a></td>
-				<td><a href="admin.php?view=info&show=1&id='.$res['unique_id'].'" alt=View player info>'.$res['unique_id'].'</a></td>
+				<td><a href="admin.php?view=info&show=1&id='.$res['unique_id'].'&cid='.$res['id'].'" alt=View player info>'.$playername.'</a></td>
+				<td><a href="admin.php?view=info&show=1&id='.$res['unique_id'].'&cid='.$res['id'].'" alt=View player info>'.$res['unique_id'].'</a></td>
 				<td>'.$player_guid.'</td>
 				<td>'.$player_ip.'</td>
 				<td>'.$res['zombie_kills'].'</td>
