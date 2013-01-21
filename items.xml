@@ -914,4 +914,8 @@
 		<type>heavyammo</type>
 		<slots>1</slots>
 	</s5rnd_86x70_l115a1>
+	<sg36c_camo>
+		<type>rifle</type>
+		<slots>10</slots>
+	</sg36c_camo>
 </items>
