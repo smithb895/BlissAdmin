@@ -57,7 +57,7 @@ if (isset($_SESSION['user_id']))
 			<?php
 		}
 		if (isset($_GET["delete"])){
-			$todelete = preg_replace('#[0-9]+#', '', $_GET['delete']);
+			$todelete = preg_replace('#[^0-9+]#', '', $_GET['delete']);
 			//$remquery = "Delete FROM objects WHERE id=".$_GET["delete"];
 			//$result = mysql_query($remquery) or die(mysql_error());
 			//$class = mysql_fetch_assoc($result);
@@ -88,17 +88,18 @@ if (isset($_SESSION['user_id']))
 			$remquery1->execute(array($todelete));
 			$affected1 = $remquery1->rowCount();
 			
-			echo "Deleted $affected deployed items from player.<br />";
-			echo "Deleted $affected1 player records from the survivor table<br />";
+			echo "<b>Deleted $affected deployed items from player.</b><br />";
+			echo "<b>Deleted $affected1 player records from the survivor table.</b><br />";
 			
 			?>
 			<script type="text/javascript">
-				setTimeout('window.location="admin.php?view=check"',5000);
+				//window.location="admin.php?view=check"
+				setTimeout(function() {window.location="admin.php?view=check";},5000)
 			</script>
 			<?php
 		}
 		if (isset($_GET["deletespawns"])){
-			$todelete = preg_replace('#[0-9]+#', '', $_GET['deletespawns']);
+			$todelete = preg_replace('#[^0-9+]#', '', $_GET['deletespawns']);
 			//$remquery = "Delete FROM spawns WHERE ObjectID=".$_GET["deletespawns"];
 			//$result = mysql_query($remquery) or die(mysql_error());
 			//$class = mysql_fetch_assoc($result);
@@ -111,7 +112,7 @@ if (isset($_SESSION['user_id']))
 			<?php
 		}
 		if (isset($_GET["resetlocation"])){
-			$_getdata = preg_replace('#[0-9]+#', '', $_GET["resetlocation"]);
+			$_getdata = preg_replace('#[^0-9+]#', '', $_GET["resetlocation"]);
 			//$remquery = "update survivor set pos = '[]' WHERE id='".$_GET["resetlocation"]."'";
 			//$result = mysql_query($remquery) or die(mysql_error());
 			//$class = mysql_fetch_assoc($result);

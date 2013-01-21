@@ -10,7 +10,7 @@ global $world;
 global $selectserver;
 
 if (isset($_GET['selectserver'])) {
-	$selectserver = preg_replace('#[0-9]+#', '', $_GET['selectserver']);
+	$selectserver = preg_replace('#[^0-9+]#', '', $_GET['selectserver']);
 }
 
 

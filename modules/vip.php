@@ -4,7 +4,7 @@ if (isset($_SESSION['user_id']))
 	include_once('/modules/login_connect.php');
 	if ($_SESSION['tier'] < 3) {
 		$pagetitle = "Manage VIPS (Under Construction)";
-		include_once('/modules/login_connect.php');
+		//include_once('/modules/login_connect.php');
 		//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('Manage VIPS','{$_SESSION['login']}',NOW())";
 		//$sql2 = mysql_query($query) or die(mysql_error());
 		$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('Manage VIPS',?,NOW())");
@@ -35,7 +35,7 @@ if (isset($_SESSION['user_id']))
 ?>
 <div id="dvPopup" style="display:none; width:900px; height: 450px; border:4px solid #000000; background-color:#FFFFFF;">
 				<a id="closebutton" style="float:right;" href="#" onclick="HideModalPopup('dvPopup'); return false;"><img src="images/table/action_delete.gif" alt="" /></a><br />
-				<?php include ('modules/addvip.php'); ?>
+				<?php //include ('modules/addvip.php'); ?>
 </div>
 	<div id="page-heading">
 <?php
