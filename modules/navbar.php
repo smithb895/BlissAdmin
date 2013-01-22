@@ -213,6 +213,7 @@ if (isset($_SESSION['user_id']))
 <?php } ?>
 				</ul>
 				<li class="li-dashboard root active"><a href="admin.php?view=viewbans" style="color:#FFF;" class="dashboard item">Bans</a></li>
+				<li class="li-dashboard root active"><a href="admin.php?view=playerdb" style="color:#FFF;" class="dashboard item">Player DB</a></li>
 				<div class="clear"></div>
 			</div>
 			<div class="clear"></div>

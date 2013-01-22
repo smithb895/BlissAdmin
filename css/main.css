@@ -195,4 +195,28 @@ h2 {
 }
 #paged_table_rows {
 	text-align: center;
+	font-size: 13px;
+	/*font-weight: bold;*/
+}
+.pagination {
+	list-style-type: none;
+}
+.pagination li {
+	font-size: 14px;
+	font-weight: bold;
+	float: left;
+	margin: 0 5px;
+	text-decoration: underline;
+}
+.pagination li.active {
+	cursor: pointer;
+}
+.pagination li:hover {
+	text-shadow: 0px 0px 3px rgba(255, 0, 0, .9);
+}
+li#current_page {
+	color: #F00;
+}
+#left_margin_50 {
+	margin-left: 50px;
 }
