@@ -16,8 +16,8 @@ if (isset($_POST['page'])) {
 } else {
 	$page = 1;
 }
-$page -= 1;
 $cur_page = $page;
+$page -= 1;
 $per_page = 50;
 $previous_btn = true;
 $next_btn = true;
@@ -28,12 +28,10 @@ $start = $page * $per_page;
 //$query_pag_data = "SELECT msg_id,message from messages LIMIT $start, $per_page";
 //$result_pag_data = mysql_query($query_pag_data) or die('MySql Error' . mysql_error());
 
-//$queryBansPage = 'SELECT * FROM bans LIMIT ?, ?';
-$queryHandle = $dbhandle3->query("SELECT * FROM bans ORDER BY `ID` DESC LIMIT ".$start.",".$per_page);
-//$queryHandle = $dbhandle3->prepare("SELECT * FROM bans LIMIT ?,?"); // WTF not working
-//$queryHandle->execute(array($start,$per_page));
-
-
+$queryHandle = $dbhandle3->prepare("SELECT * FROM bans ORDER BY `ID` DESC LIMIT :start,:per_page");
+$queryHandle->bindParam(':start', $start, PDO::PARAM_INT);
+$queryHandle->bindParam(':per_page', $per_page, PDO::PARAM_INT);
+$queryHandle->execute();
 
 $msg = "";
 //while ($row = mysql_fetch_array($result_pag_data)) {
@@ -87,7 +85,7 @@ if ($cur_page >= 7) {
 		$end_loop = $no_of_paginations;
 }
 /* ----------------------------------------------------------------------------------------------------------- */
-$msg .= "<div class='pagination'><ul>";
+$msg .= "<tr class='pagination'><td colspan='8'><ul>";
 
 // FOR ENABLING THE FIRST BUTTON
 
@@ -107,7 +105,7 @@ if ($previous_btn && $cur_page > 1) {
 for ($i = $start_loop; $i <= $end_loop; $i++) {
 
 	if ($cur_page == $i)
-		$msg .= "<li p='$i' style='color:#fff;background-color:#006699;' class='active'>{$i}</li>";
+		$msg .= "<li p='$i' id='current_page' class='active'>{$i}</li>";
 	else
 		$msg .= "<li p='$i' class='active'>{$i}</li>";
 }
@@ -128,7 +126,7 @@ if ($last_btn && $cur_page < $no_of_paginations) {
 }
 $goto = "<input type='text' class='goto' size='1' style='margin-top:-1px;margin-left:60px;'/><input type='button' id='go_btn' class='go_button' value='Go'/>";
 $total_string = "<span class='total' a='$no_of_paginations'>Page <b>" . $cur_page . "</b> of <b>$no_of_paginations</b></span>";
-$msg = $msg . "</ul>" . $goto . $total_string . "</div>";  // Content for pagination
+$msg = $msg . "</ul>" . $goto . $total_string . "</td></tr>";  // Content for pagination
 
 //$msg = "Hello";
 echo $msg;

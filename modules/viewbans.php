@@ -1,6 +1,6 @@
 <?php
-//error_reporting(E_ALL);
-//ini_set('display_errors',1);
+error_reporting(E_ALL);
+ini_set('display_errors',1);
 if (isset($_SESSION['user_id'])) {
 	include_once('config.php');
 	//include_once('hive_connect.php');
@@ -38,10 +38,16 @@ if (isset($_SESSION['user_id'])) {
 		}
 ?>
 	<script src="js/fetchrows.js" type="text/javascript"></script>
+	<script src="js/functions.js" type="text/javascript"></script>
 	
 	<div id="dvPopup" style="display:none; width:900px; height: 450px; border:4px solid #000000; background-color:#FFFFFF;">
 					<a id="closebutton" style="float:right;" href="#" onclick="HideModalPopup('dvPopup'); return false;"><img src="images/table/action_delete.gif" alt="" /></a><br />
-					<?php include ('modules/addban.php'); ?>
+					<?php //include ('modules/addban.php'); ?>
+	</div>
+	
+	<div id="dvPopup2" style="display:none; width:900px; height: 450px; border:4px solid #000000; background-color:#FFFFFF;">
+					<a id="closebutton" style="float:right;" href="#" onclick="HideModalPopup('dvPopup2');"><img src="images/table/action_delete.gif" alt="" /></a><br />
+					<span id='dvPopup2_content'></span>
 	</div>
 	
 	<div id="page-heading">
@@ -50,6 +56,29 @@ if (isset($_SESSION['user_id'])) {
 	echo "<h1>".$pagetitle."</h1>";
 ?>
 	</div>
+	
+	<!-- begin search form -->
+	<form action="" onClick="return false;" method="post" id="left_margin_50">
+		<table border="0" cellpadding="0" cellspacing="0">
+		<tr>
+		<td><input id="search_box" name="search" type="text" value="Search" onblur="if (this.value=='') { this.value='Search'; }" onfocus="if (this.value=='Search') { this.value=''; }" class="top-search-inp" /></td>
+		<td>
+		<select id="search_type" name="type" class="styledselect">
+			<option value="guidip">GUID/IP</option>
+			<option value="known_names">Known Names</option>
+			<option value="admin">Admin</option>
+			<option value="reason">Reason</option>
+		</select> 
+		</td>
+		<td>
+		<input type="submit" id="search_btn" class="submit-login"  />
+		</td>
+		<td id="searching_for"></td>
+		</tr>
+		</table>
+	</form>
+	<!-- end search form -->
+	
 	<table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
 		<tr>
 			<th rowspan="3" class="sized"></th>
@@ -79,6 +108,16 @@ if (isset($_SESSION['user_id'])) {
 							</div>
 							<div class="clear"></div>
 						</div>
+						<div id="related-act-inner">
+							<div class="left"><a href="#" onclick="ShowModalPopup('dvPopup2'); return false;">
+								<img width="21" height="21" alt="" src="images/forms/icon_plus.gif"></a>
+							</div>
+							<div class="right">
+								<h5><a href="#" onclick="importBans(); ShowModalPopup('dvPopup2'); return false;">Update DB</a></h5>
+								Import new bans from bans.txt
+							</div>
+							<div class="clear"></div>
+						</div>
 					</div>
 				</div>
 				
@@ -88,14 +127,14 @@ if (isset($_SESSION['user_id'])) {
 					<table border="0" width="75%" cellpadding="0" cellspacing="0" id="product-table">
 					<thead>
 						<tr>
-							<th class="table-header-repeat line-left" width="4%"><a href="">Unban</a></th>
+							<th class="table-header-repeat line-left" width="3%"><a href="">Unban</a></th>
 							<th class="table-header-repeat line-left" width="9%"><a href="">Ban #</a></th>
-							<th class="table-header-repeat line-left minwidth-1" width="24%"><a href="">GUID/IP</a></th>
+							<th class="table-header-repeat line-left minwidth-1" width="25%"><a href="">GUID/IP</a></th>
 							<th class="table-header-repeat line-left" width="9%"><a href="">Length</a></th>
-							<th class="table-header-repeat line-left minwidth-1" width="32%"><a href="">Reason</a></th>
-							<th class="table-header-repeat line-left" width="10%"><a href="">Admin</a></th>
+							<th class="table-header-repeat line-left minwidth-1" width="35%"><a href="">Reason</a></th>
+							<th class="table-header-repeat line-left" width="8%"><a href="">Admin</a></th>
 							<th class="table-header-repeat line-left" width="8%"><a href="">Added</a></th>
-							<th class="table-header-repeat line-left" width="4%"><a href="">Active</a></th>
+							<th class="table-header-repeat line-left" width="3%"><a href="">Active</a></th>
 						</tr>
 					</thead>
 						<!-- Bans table rows begin -->
