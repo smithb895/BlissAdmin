@@ -93,8 +93,12 @@ if (isset($_SESSION['user_id']))
 			
 			?>
 			<script type="text/javascript">
-				//window.location="admin.php?view=check"
-				setTimeout(function() {window.location="admin.php?view=check";},5000)
+				window.location="admin.php?view=check"
+				/*
+				setTimeout(function() {
+					window.location.href = 'admin.php?view=check';
+				}, 5000);
+				*/
 			</script>
 			<?php
 		}
