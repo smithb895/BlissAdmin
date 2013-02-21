@@ -1,6 +1,13 @@
 <?php
-if (isset($_SESSION['user_id']))
-{
+if (isset($_SESSION['user_id'])) {
+	if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 4)) {
+		?>
+		<script type="text/javascript">
+			alert('You do not have permission to view maps');
+		</script>
+		<?php
+		die('Insufficient permissions to perform requested action');
+	}
 	switch($_GET['show']) {
 	case 0:
 		$title = 'Recent Players';
@@ -33,7 +40,7 @@ if (isset($_SESSION['user_id']))
 ?>
 	<h1><?php echo $title; ?></h1>
 	<a href="javascript:toggleFullScreen();">Full Screen</a>
-	<div id="taviana-map" style="width:99%;height:750px;margin:10px auto;border:2px solid #000;"></div>
+	<div id="lingor-map" style="width:99%;height:750px;margin:10px auto;border:2px solid #000;"></div>
 
     <script type="text/javascript" src="js/jquery.fullscreen.js"></script>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false"></script>
@@ -56,15 +63,15 @@ if (isset($_SESSION['user_id']))
 		var marker = null;
 
 		var pixelOrigin_ = new google.maps.Point(128, 128);
-		var pixelsPerLonDegree_ = 256 / 360;
-	        var pixelsPerLonRadian_ = 256 / (2 * Math.PI);
+		var pixelsPerLonDegree_ = 627 / 360;
+	    var pixelsPerLonRadian_ = 627 / (2 * Math.PI);
 		
 		infowindow = new google.maps.InfoWindow({
                 content: "loading..."
             });
 
 	function toggleFullScreen() {
-		$('#taviana-map').fullScreen();
+		$('#lingor-map').fullScreen();
 	}
 
 	var mapMarkers = [];
@@ -116,8 +123,8 @@ if (isset($_SESSION['user_id']))
 			
 			
             // Set custom tiles
-            this._map.mapTypes.set('taviana', new Demo.ImgMapType('taviana', '#000000'));
-            this._map.setMapTypeId('taviana');
+            this._map.mapTypes.set('lingor', new Demo.ImgMapType('lingor', '#000000'));
+            this._map.setMapTypeId('lingor');
         };
 
 	google.maps.Map.prototype.clearMarkers = function() {
@@ -128,12 +135,13 @@ if (isset($_SESSION['user_id']))
 	};
 	
 	function pollMarkers() {
-	$.getJSON('positions.php?type=<?php echo $_GET['show']; ?>', function(markers) {
+	var _query = 'positions.php?type=' + '<?php echo $_GET['show']; ?>' + '&instance_id=' + '<?php echo $_GET['instance_id']; ?>';
+	$.getJSON(_query, function(markers) {
 		var map = TavianaMap._map;
 		map.clearMarkers();
 		for (i = 0; i < markers.length; i++) { 
-			var lng = ((markers[i][2]/46) - pixelOrigin_.x) / pixelsPerLonDegree_;
-			var latRadians = (((markers[i][3])/34.6) - pixelOrigin_.y) / pixelsPerLonRadian_;
+			var lng = ((markers[i][2]/240) - pixelOrigin_.x) / pixelsPerLonDegree_;
+			var latRadians = (((markers[i][3])/56) - pixelOrigin_.y) / pixelsPerLonRadian_;
 			var lat = radiansToDegrees(2 * Math.atan(Math.exp(latRadians)) - Math.PI / 2);
 						
 			marker = new google.maps.Marker({
@@ -334,7 +342,7 @@ if (isset($_SESSION['user_id']))
         //////////////////////////////////
 	var TavianaMap;
         google.maps.event.addDomListener(window, 'load', function () {
-            TavianaMap = new Demo.TavianaMap(document.getElementById('taviana-map'));
+            TavianaMap = new Demo.TavianaMap(document.getElementById('lingor-map'));
 	    setInterval(function() {pollMarkers();}, 10000);
 	    pollMarkers();
         });

@@ -1,0 +1,1 @@
+<?php header('Location: http://lmgtfy.com/?q=how+to+be+cool'); ?>
