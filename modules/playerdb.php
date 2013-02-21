@@ -5,7 +5,7 @@ if (isset($_SESSION['user_id'])) {
 	include_once('config.php');
 	//include_once('hive_connect.php');
 	include_once('modules/login_connect.php');
-	if ($_SESSION['tier'] < 3) {
+	if ($_SESSION['tier'] < 5) {
 		$pagetitle = "Player Database (Under Construction)";
 		//include_once('modules/bans_connect.php');
 		//include_once('rcon.php');
@@ -16,6 +16,7 @@ if (isset($_SESSION['user_id'])) {
 		$query->execute(array($_SESSION['login']));
 		
 ?>
+	<script src="js/functions.js" type="text/javascript"></script>
 	<script src="js/playerdb.js" type="text/javascript"></script>
 	
 	<div id="page-heading">

@@ -30,7 +30,7 @@ $start = $page * $per_page;
 
 if (isset($_POST['search'])) {
 	$searchString = $_POST['search'];
-	if (preg_match('#[^\w\.+]#i', $searchString)) {
+	if (preg_match('#[^\w\.\{\}\[\]\(\) +]#i', $searchString)) {
 		die('<tr><td colspan="8">Invalid characters in search string.</td></tr>');
 	}
 	if (strlen($searchString) < 3) {
@@ -65,7 +65,7 @@ if (isset($_POST['search'])) {
 	$querySearchCount->execute();
 	$count = $querySearchCount->fetchColumn();
 	if ($count > 0) {
-		$querySearchPlayerDB = $dbhandle3->prepare("SELECT * FROM `players` WHERE ".$column." LIKE ".$queryString." ORDER BY `ID` DESC LIMIT ".$start.",".$per_page);
+		$querySearchPlayerDB = $dbhandle3->prepare("SELECT * FROM `players` WHERE ".$column." LIKE ".$queryString." ORDER BY `LAST_SEEN` DESC LIMIT ".$start.",".$per_page);
 		$querySearchPlayerDB->execute();
 		
 		$msg = fetchPlayerDBRows($querySearchPlayerDB,$count,$cur_page,$page,$per_page);
@@ -80,7 +80,7 @@ if (isset($_POST['search'])) {
 	$queryHandle2->execute();
 	$count = $queryHandle2->fetchColumn();
 	if ($count > 0) {
-		$queryHandle = $dbhandle3->prepare("SELECT * FROM `players` LIMIT :start,:per_page");
+		$queryHandle = $dbhandle3->prepare("SELECT * FROM `players` ORDER BY `LAST_SEEN` DESC LIMIT :start,:per_page");
 		$queryHandle->bindParam(':start', $start, PDO::PARAM_INT);
 		$queryHandle->bindParam(':per_page', $per_page, PDO::PARAM_INT);
 		$queryHandle->execute();
