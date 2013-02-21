@@ -8,6 +8,7 @@ Fix:
 -Need to test (and maybe fix) Ban/Kick/Delete player buttons in the table rows
 -add local log file support for other servers (add to DayZ_Servers PHP class)
 -Replace any remaining mysql_ functions with PDO equivalents
+-Fix selected server title on dashboard to show currently selected server
 
 Add:
 -cleanup hive options, database admin page
@@ -18,6 +19,7 @@ Add:
 	-total deaths/kills/murders/etc
 -Scripts log notifier (notify on abnormal scripts logged, maybe something similar to Item Check page?)
 -Create in-page popup div for gear selection for both player gear select and VIP gear select
+-popup for modifying player gear and creating VIP loadouts
 -kool features :)
 
 Larger Projects:

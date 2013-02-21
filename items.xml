@@ -526,6 +526,10 @@
         <type>rifle</type>
         <slots>10</slots>
     </sm16a4_acg>
+	<sm16a4>
+        <type>rifle</type>
+        <slots>10</slots>
+    </sm16a4>
     <sm24>
         <type>rifle</type>
         <slots>10</slots>
@@ -918,4 +922,8 @@
 		<type>rifle</type>
 		<slots>10</slots>
 	</sg36c_camo>
+	<sm16a4_gl>
+		<type>rifle</type>
+		<slots>10</slots>
+	</sm16a4_gl>
 </items>
