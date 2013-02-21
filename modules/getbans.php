@@ -3,9 +3,12 @@
 //ini_set('display_errors',1);
 
 include_once('/../config.php');
+include_once('/../session.php');
 //include_once('hive_connect.php');
 //include_once('rcon.php');
+require('functions.php');
 include_once('bans_connect.php');
+include_once('login_connect.php');
 //global $DayZ_Servers;
 //global $serverip;
 //global $serverport;
@@ -25,108 +28,238 @@ $first_btn = true;
 $last_btn = true;
 $start = $page * $per_page;
 
-//$query_pag_data = "SELECT msg_id,message from messages LIMIT $start, $per_page";
-//$result_pag_data = mysql_query($query_pag_data) or die('MySql Error' . mysql_error());
 
-$queryHandle = $dbhandle3->prepare("SELECT * FROM bans ORDER BY `ID` DESC LIMIT :start,:per_page");
-$queryHandle->bindParam(':start', $start, PDO::PARAM_INT);
-$queryHandle->bindParam(':per_page', $per_page, PDO::PARAM_INT);
-$queryHandle->execute();
 
-$msg = "";
-//while ($row = mysql_fetch_array($result_pag_data)) {
-//$row=$queryHandle->fetch(PDO::FETCH_ASSOC);
-//var_dump($row);
-while ($row=$queryHandle->fetch(PDO::FETCH_ASSOC)) {
-	//$htmlmsg=htmlentities($row['message']); //HTML entries filter
-	//$msg .= "<li><b>" . $row['msg_id'] . "</b> " . $htmlmsg . "</li>";
-	if ($row['ID'] % 2) {
-		$msg .= '<tr class="alternate-row">';
-	} else {
-		$msg .= '<tr>';
+if (isset($_POST['search'])) {
+	$searchString = $_POST['search'];
+	if (preg_match('#[^\w\.\{\}\[\]\(\) +]#i', $searchString)) {
+		die('<tr><td colspan="8">Invalid characters in search string.</td></tr>');
 	}
-	$msg .= '
-						<td><input name="delban[]" value="'.$row["ID"].'" type="checkbox"/></td>
-						<td>'.$row["ID"].'</td>
-						<td>'.$row["GUID_IP"].'</td>
-						<td>'.$row["LENGTH"].'</td>
-						<td>'.$row["REASON"].'</td>
-						<td>'.$row["ADMIN"].'</td>
-						<td>'.$row["DATE_TIME"].'</td>
-						<td>'.$row["ACTIVE"].'</td>
-					</tr>';
+	if ((strlen($searchString) < 3) && ($_POST['type'] != "admin")) {
+		die('<tr><td colspan="8">Search string too short (must be at least 3 chars).</td></tr>');
+	}
+	if (isset($_POST['type'])) {
+		if (preg_match('#[^0-9a-z_+]#i', $_POST['type'])) {
+			die('<tr><td colspan="8">Invalid POST value</td></tr>');
+		}
+		$searchType = $_POST['type'];
+	} else {
+		die('<tr><td colspan="8">Search type not specified</td></tr>');
+	}
+	switch ($searchType) {
+		case 'guidip':
+			$column = '`GUID_IP`';
+			break;
+		case 'known_names':
+			$column = '`KNOWN_NAMES`';
+			break;
+		case 'admin':
+			$column = '`ADMIN`';
+			break;
+		case 'reason':
+			$column = '`REASON`';
+			break;
+		default:
+			$column = '`GUID_IP`';
+			break;
+	}
+	$queryString = stringSplitSQL($searchString, $column);
+	
+	// Ugly, but it works... :-/
+	$querySearchCount = $dbhandle3->prepare("SELECT COUNT(*) FROM `bans` WHERE ".$column." LIKE ".$queryString);
+	$querySearchCount->execute();
+	$count = $querySearchCount->fetchColumn();
+	if ($count > 0) {
+		$querySearchBansDB = $dbhandle3->prepare("SELECT * FROM `bans` WHERE ".$column." LIKE ".$queryString." ORDER BY `ID` DESC LIMIT ".$start.",".$per_page);
+		$querySearchBansDB->execute();
+		
+		$msg = fetchBanRows($querySearchBansDB,$count,$cur_page,$page,$per_page);
+	} else {
+		$msg = '<tr><td colspan="8">No results found.</td></tr>';
+	}
+	
+} elseif (isset($_POST['delban'])) {
+	// If deleting a ban..
+	$bansRemoved = 0;
+	$bansToDelete = preg_replace('#[^0-9+]#', '', $_POST['delban']); // array
+	for ($i=0; $i< count($bansToDelete); $i++) {
+		// Get GUID or IP for ban to be removed
+		$queryBan = $dbhandle3->prepare('SELECT `GUID_IP` FROM `bans` WHERE `ID`=?');
+		$queryBan->execute(array($bansToDelete[$i]));
+		$banGUID_IP = $queryBan->fetchColumn();
+		
+		// Log ban removal
+		$queryLog = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES (?,?,NOW())");
+		$queryLog->execute(array('UNBAN: '.$banGUID_IP,$_SESSION['login']));
+		
+		// Remove ban
+		$queryDelBan = $dbhandle3->prepare('UPDATE `bans` SET `ACTIVE`=0 WHERE `ID`=?');
+		$queryDelBan->execute(array($bansToDelete[$i]));
+		$bansRemoved += $queryDelBan->rowCount();
+		
+	}
+	$msg = "Successfully removed $bansRemoved bans.<script>
+						setTimeout(function() {
+							$('#popup_msg').slideUp('fast');
+							$('#popup_msg').html('');
+							fetchDBRows('bans','none','none',1);
+						}, 4000);
+					</script>
+			";
+} elseif (isset($_POST['addban'])) {
+	// If adding a ban..
+	$bansAdded = 0;
+	if (preg_match('#[^0-9a-f\.+]#', $_POST['addban'])) {
+		die('Invalid characters in GUID/IP');
+	}
+	$banGUID_IP = $_POST['addban'];
+	if (strlen($banGUID_IP) > 32) {
+		die('GUID/IP is too long.  Max 32 characters.');
+	}
+	if (isset($_POST['reason'])) {
+		$banREASON = preg_replace('#[^0-9a-z\., \[\]\{\}\(\)\-+]#i', '', $_POST['reason']);
+		if (strlen($banREASON) > 64) {
+			die('Ban reason is too long.  Must be 64 characters or less.');
+		}
+	} else {
+		$banREASON = "Appeal at $siteForums";
+	}
+	switch ($_POST['banlength']) {
+		case 1: // perm
+			$banLENGTH = '-1';
+			break;
+		case 2: // 10 mins
+			$banLENGTH = time() + (10 * 60);
+			break;
+		case 3: // 1 hour
+			$banLENGTH =  time() + (60 * 60);
+			break;
+		case 4: // 1 day
+			$banLENGTH = time() + (24 * 60 * 60);
+			break;
+		case 5: // 1 week
+			$banLENGTH = time() + (7 * 24 * 60 * 60);
+			break;
+		case 6: // 1 month
+			$banLENGTH = time() + (30 * 24 * 60 * 60);
+			break;
+		default:
+			$banLENGTH = '-1';
+			break;
+	}
+	
+	/*
+	if (isset($_POST['banlength'])) {
+		$banLENGTH = preg_replace('#[^\-0-9+]#', '', $_POST['banlength']);
+		if (strlen($banLENGTH) > 15) {
+			die('Ban length too long.  Max 15 characters.');
+		}
+		
+	} else {
+		$banLENGTH = '-1';
+	}
+	*/
+	
+	//$banGUID_IP = '"'.$banGUID_IP.'"';
+	// Check to make sure ban doesn't exists already
+	$queryCheckExisting = $dbhandle3->prepare('SELECT `ID`,`ACTIVE`,`NUMBANS` FROM `bans` WHERE `GUID_IP`=?');
+	$queryCheckExisting->bindValue(1, $banGUID_IP, PDO::PARAM_STR);
+	$queryCheckExisting->execute();
+	$banExistsResult = $queryCheckExisting->fetchAll(PDO::FETCH_ASSOC);
+	
+	
+	
+	if (count($banExistsResult) > 0) {
+	//while ($banExists=$queryCheckExisting->fetch(PDO::FETCH_ASSOC)) {
+		// Reban
+		if ($banExistsResult[0]['ACTIVE'] == 0) {
+			// log the ban
+			$queryLog = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES (?,?,NOW())");
+			$queryLog->execute(array('BAN: '.$banGUID_IP,$_SESSION['login']));
+			
+			$banNumber = $banExistsResult[0]['NUMBANS'] + 1; // +1 to times player has been banned, for reban
+			$queryReban = $dbhandle3->prepare("UPDATE `bans` SET `ACTIVE`=1,`NUMBANS`=? WHERE `ID`=?");
+			$queryReban->bindParam(1, $banNumber, PDO::PARAM_INT);
+			$queryReban->bindParam(2, $banExistsResult[0]['ID'], PDO::PARAM_INT);
+			$queryReban->execute();
+			
+			$msg = "Successfully rebanned GUID/IP!
+					<script>
+						setTimeout(function() {
+							$('#popup_msg').slideUp('fast');
+							$('#popup_msg').html('');
+							fetchDBRows('bans','none','none',1);
+						}, 4000);
+					</script>
+					";
+		} else {
+			$msg = "That GUID/IP is already banned!";
+		}
+	} else {
+		// log the ban
+		$queryLog = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES (?,?,NOW())");
+		$queryLog->execute(array('BAN: '.$banGUID_IP,$_SESSION['login']));
+		
+		$queryAddBan = $dbhandle3->prepare("INSERT INTO `bans` (`GUID_IP`,`LENGTH`,`REASON`,`ADMIN`,`DATE_TIME`) VALUES (:guid_ip, :length, :reason, :admin, NOW())");
+		$queryAddBan->bindParam(':guid_ip', $banGUID_IP, PDO::PARAM_STR);
+		$queryAddBan->bindParam(':length', $banLENGTH, PDO::PARAM_INT);
+		$queryAddBan->bindParam(':reason', $banREASON, PDO::PARAM_STR);
+		$queryAddBan->bindParam(':admin', $_SESSION['login'], PDO::PARAM_STR);
+		$queryAddBan->execute();
+		//$bansAdded++;
+		
+		$msg = "Successfully added ban!
+				<script>
+					setTimeout(function() {
+						$('#popup_msg').slideUp('fast');
+						$('#popup_msg').html('');
+						fetchDBRows('bans','none','none',1);
+					}, 4000);
+				</script>
+				";
+	}
+	
+	/*
+	for ($i=0; $i< count($bansToDelete); $i++) {
+		// Get GUID or IP for ban to be removed
+		$queryBan = $dbhandle3->prepare('SELECT `GUID_IP` FROM `bans` WHERE `ID`=?');
+		$queryBan->execute(array($bansToDelete[$i]));
+		$banGUID_IP = $queryBan->fetchColumn();
+		
+		// Log ban removal
+		$queryLog = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES (?,?,NOW())");
+		$queryLog->execute(array('UNBAN: '.$banGUID_IP,$_SESSION['login']));
+		
+		// Remove ban
+		$queryDelBan = $dbhandle3->prepare('UPDATE `bans` SET `active`=0 WHERE `ID`=?');
+		$queryDelBan->execute(array($bansToDelete[$i]));
+		$bansAdded += $queryDelBan->rowCount();
+		
+	}
+	*/
+	//$msg = "<tr><td colspan='8'>Successfully added $bansAdded bans.</td></tr>";
+} else {
+	/* -----Total count--- */
+	$query_pag_num = 'SELECT COUNT(*) FROM `bans`'; // Total records
+	$queryHandle2 = $dbhandle3->prepare($query_pag_num);
+	$queryHandle2->execute();
+	$count = $queryHandle2->fetchColumn();
+	if ($count > 0) {
+		$queryHandle = $dbhandle3->prepare("SELECT * FROM `bans` ORDER BY `ID` DESC LIMIT :start,:per_page");
+		$queryHandle->bindParam(':start', $start, PDO::PARAM_INT);
+		$queryHandle->bindParam(':per_page', $per_page, PDO::PARAM_INT);
+		$queryHandle->execute();
+		
+		$msg = fetchBanRows($queryHandle,$count,$cur_page,$page,$per_page);
+	} else {
+		$msg = '<tr><td colspan="8">No results found.</td></tr>';
+	}
 }
-//$msg = "<div class='data'><ul>" . $msg . "</ul></div>"; // Content for Data
-/* -----Total count--- */
-$query_pag_num = 'SELECT COUNT(*) FROM `bans`'; // Total records
-$queryHandle2 = $dbhandle3->prepare($query_pag_num);
-$queryHandle2->execute();
-$count = $queryHandle2->fetchColumn();
+
 //$result_pag_num = mysql_query($query_pag_num);
 //$row = mysql_fetch_array($result_pag_num);
 //$count = $row['count'];
-$no_of_paginations = ceil($count / $per_page);
-/* -----Calculating the starting and endign values for the loop----- */
-if ($cur_page >= 7) {
-	$start_loop = $cur_page - 3;
-	if ($no_of_paginations > $cur_page + 3)
-		$end_loop = $cur_page + 3;
-	else if ($cur_page <= $no_of_paginations && $cur_page > $no_of_paginations - 6) {
-		$start_loop = $no_of_paginations - 6;
-		$end_loop = $no_of_paginations;
-	} else {
-		$end_loop = $no_of_paginations;
-	}
-} else {
-	$start_loop = 1;
-	if ($no_of_paginations > 7)
-		$end_loop = 7;
-	else
-		$end_loop = $no_of_paginations;
-}
-/* ----------------------------------------------------------------------------------------------------------- */
-$msg .= "<tr class='pagination'><td colspan='8'><ul>";
 
-// FOR ENABLING THE FIRST BUTTON
-
-if ($first_btn && $cur_page > 1) {
-	$msg .= "<li p='1' class='active'>First</li>";
-} else if ($first_btn) {
-	$msg .= "<li p='1' class='inactive'>First</li>";
-}
-
-// FOR ENABLING THE PREVIOUS BUTTON
-if ($previous_btn && $cur_page > 1) {
-	$pre = $cur_page - 1;
-	$msg .= "<li p='$pre' class='active'>Previous</li>";
-} else if ($previous_btn) {
-	$msg .= "<li class='inactive'>Previous</li>";
-}
-for ($i = $start_loop; $i <= $end_loop; $i++) {
-
-	if ($cur_page == $i)
-		$msg .= "<li p='$i' id='current_page' class='active'>{$i}</li>";
-	else
-		$msg .= "<li p='$i' class='active'>{$i}</li>";
-}
-
-// TO ENABLE THE NEXT BUTTON
-if ($next_btn && $cur_page < $no_of_paginations) {
-	$nex = $cur_page + 1;
-	$msg .= "<li p='$nex' class='active'>Next</li>";
-} else if ($next_btn) {
-	$msg .= "<li class='inactive'>Next</li>";
-}
-
-// TO ENABLE THE END BUTTON
-if ($last_btn && $cur_page < $no_of_paginations) {
-	$msg .= "<li p='$no_of_paginations' class='active'>Last</li>";
-} else if ($last_btn) {
-	$msg .= "<li p='$no_of_paginations' class='inactive'>Last</li>";
-}
-$goto = "<input type='text' class='goto' size='1' style='margin-top:-1px;margin-left:60px;'/><input type='button' id='go_btn' class='go_button' value='Go'/>";
-$total_string = "<span class='total' a='$no_of_paginations'>Page <b>" . $cur_page . "</b> of <b>$no_of_paginations</b></span>";
-$msg = $msg . "</ul>" . $goto . $total_string . "</td></tr>";  // Content for pagination
 
 //$msg = "Hello";
 echo $msg;

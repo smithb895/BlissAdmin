@@ -13,6 +13,7 @@
 */
 
 require("/../config.php");
+require("/../session.php");
 include_once("/../modules/bans_connect.php");
 
 // Test line, make sure to comment out foreach loop and mysql stuph when testing
@@ -30,12 +31,20 @@ $qryCount = $dbhandle3->query('SELECT count(`ID`) FROM `bans`');
 //$qryCount->execute();
 $totalBans = $qryCount->fetchColumn();
 
-$qry = $dbhandle3->prepare('INSERT INTO `bans` (`ID`, `GUID_IP`, `LENGTH`, `REASON`, `ADMIN`) VALUES (:id, :guid_ip, :length, :reason, :admin)');
+$qry = $dbhandle3->prepare('INSERT INTO `bans` (`ID`, `GUID_IP`, `LENGTH`, `REASON`, `ADMIN`, `DATE_TIME`) VALUES (:id, :guid_ip, :length, :reason, :admin, CURRENT_TIMESTAMP())');
+$qryReban = $dbhandle3->prepare('UPDATE `bans` SET `ACTIVE`=1 WHERE `ID`=? LIMIT 1');
+$qryUnban = $dbhandle3->prepare('UPDATE `bans` SET `ACTIVE`=0 WHERE `ID`=? LIMIT 1');
+$queryCheckExisting = $dbhandle3->prepare('SELECT * FROM `bans` WHERE `GUID_IP` LIKE ? AND `ACTIVE`=0');
+$queryActiveBansDB = $dbhandle3->prepare('SELECT * FROM `bans` WHERE `ACTIVE`=1');
+$queryActiveBansDB->execute();
+
 
 // iterate through array
 $bansInserted = 0;
-foreach ($bansArray as $line)
-{
+$unbans = 0;
+$rebans = 0;
+$bansTXT = array();
+foreach ($bansArray as $line) {
 	// This will determine if first part of line is GUID or IP
 	// Load first 32 chars of line into $testGUID_IP
 	$testGUID_IP = substr($line, 0, 32);
@@ -54,7 +63,7 @@ foreach ($bansArray as $line)
 	
 	//  This will catch lines without a reason or time specified
 	if ((strlen($line) - strlen($setGUIDIP)) < 3) {
-		$setREASON = "Appeal at anzuswargames.info/forums";
+		$setREASON = "Appeal at $siteForums";
 		$setTIME = "-1";
 	} else {
 		// This regex will find the ban time length in each line
@@ -77,6 +86,13 @@ foreach ($bansArray as $line)
 	// To echo test results
 	//echo "$setGUIDIP $setTIME $setREASON ADMIN: $setADMIN<br />";
 	
+	$queryCheckExisting->execute(array($setGUIDIP));
+	while ($bansRow = $queryCheckExisting->fetch(PDO::FETCH_ASSOC)) {
+		$qryReban->execute(array($bansRow['ID']));
+		$rebans++;
+	}
+	
+	
 	$totalBans++;
 	$qry->bindParam(':id', $totalBans, PDO::PARAM_INT);
 	$qry->bindParam(':guid_ip', $setGUIDIP, PDO::PARAM_STR);
@@ -88,10 +104,56 @@ foreach ($bansArray as $line)
 	if ($qry->errorCode() != 0) {
 		$totalBans -= 1;
 	} else {
-		echo "Successfully imported 1 ban!<br />";
+		//echo "Successfully imported 1 ban!<br />";
 		$bansInserted++;
 	}
 	
+	$bansTXT[] = $setGUIDIP;
 }
-echo "Successfully imported a total of $bansInserted bans!<br />";
+
+while ($bansRow = $queryActiveBansDB->fetch(PDO::FETCH_ASSOC)) {
+	if (!in_array($bansRow['GUID_IP'], $bansTXT)) {
+		$qryUnban->execute(array($bansRow['ID']));
+		$unbanned[] = $bansRow['GUID_IP'];
+		$unbans++;
+	}
+}
+echo "Done.<br /><br />";
+if ($bansInserted > 0) {
+	echo "Successfully imported a total of $bansInserted bans!<br />Please wait while banlist refreshes...<br /><br />
+			<script type='text/javascript'>
+				setTimeout(function() {
+					//window.location.reload(1);
+					fetchDBRows('bans','none','none',1);
+				}, 4000);
+			</script>
+		";
+} else {
+	echo "No new bans inserted!<br /><br />";
+}
+if ($unbans > 0) {
+	echo "NOTICE: Unbanned a total of $unbans players!<br />Please wait while banlist refreshes...<br /><br />
+			<script type='text/javascript'>
+				setTimeout(function() {
+					//window.location.reload(1);
+					fetchDBRows('bans','none','none',1);
+				}, 4000);
+			</script>
+	";
+	/*
+	foreach ($unbanned as $unban) {
+		echo "$unban<br />";
+	}
+	*/
+}
+if ($rebans > 0) {
+	echo "NOTICE: Rebanned a total of $rebans players!<br />Please wait while banlist refreshes...<br /><br />
+			<script type='text/javascript'>
+				setTimeout(function() {
+					//window.location.reload(1);
+					fetchDBRows('bans','none','none',1);
+				}, 4000);
+			</script>
+	";
+}
 ?>
