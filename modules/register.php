@@ -64,9 +64,9 @@ if (isset($_SESSION['user_id']))
 								<th valign="top">Tier:</th>
 								<td>
 									<select class="inp-form" id="tier" name="tier" form="regform">
-										<option value="4">4 (Player Info Read Only)</option>
-										<option value="3">3 (Player Info Read + Maps)</option>
-										<option value="2">2 (Modify Players + Maps)</option>
+										<option value="4">4 (Player Info + Maps)</option>
+										<option value="3">3 (+Modify Players)</option>
+										<option value="2">2 (+Manage VIPs)</option>
 										<option value="1">1 (Full Admin)</option>
 									</select>
 								</td>
