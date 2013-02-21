@@ -1,11 +1,11 @@
 <?php
 $cid = '';
 if (isset($_GET['cid'])){
-	$cid = preg_replace('#[^0-9a-z_+]#i', '', $_GET['cid']);  // Always a good idea to sanitize GET values ;)
+	$cid = preg_replace('#[^0-9a-z_+]#i', '', $_GET['cid']);
 }
 $id_safe = preg_replace('#[^0-9a-z+]#i', '', $_GET["id"]);
 
-$querySurvivorInfo = $dbhandle->prepare("SELECT * FROM survivor WHERE id=? AND is_dead=0 LIMIT 1");
+$querySurvivorInfo = $dbhandle->prepare("SELECT s.*,p.name as `name` FROM survivor s JOIN profile p on s.unique_id=p.unique_id WHERE s.id=? AND s.is_dead=0 LIMIT 1");
 $querySurvivorInfo->execute(array($cid));
 
 $queryProfileInfo = $dbhandle->prepare("SELECT * FROM profile WHERE unique_id LIKE ? LIMIT 1");
@@ -38,6 +38,11 @@ while ($row = $querySurvivorInfo->fetch(PDO::FETCH_ASSOC)) {
 	//$Backpack  = str_replace('"', "", $Backpack );
 	$Backpack  = json_decode($Backpack);
 	$model = $row['model'];
+	if (isset($row['name'])) {
+		$pname = $row['name'];
+	} else {
+		$pname = "Unknown";
+	}
 	
 	$binocular = array();
 	$rifle = '<img style="max-width:220px;max-height:92px;" src="images/gear/rifle.png" title="" alt=""/>';
@@ -99,8 +104,8 @@ while ($row = $querySurvivorInfo->fetch(PDO::FETCH_ASSOC)) {
 
 ?>	
 	<div id="page-heading">
-		<h1><?php echo "<title>".$rowname['name']." - ".$sitename."</title>"; ?></h1>
-		<h1><?php echo $rowname['name']; ?> - <?php echo $row['unique_id']; ?> - Last save: <?php echo $row['last_updated']; ?></h1>
+		<h1><?php echo "<title>".$row['name']." - ".$sitename."</title>"; ?></h1>
+		<h1><?php echo $row['name']; ?> - <?php echo $row['unique_id']; ?> - Last save: <?php echo $row['last_updated']; ?></h1>
 	</div>
 	<!-- end page-heading -->
 

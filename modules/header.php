@@ -42,6 +42,7 @@ $(function() {
 </script> -->
 
 <script src="js/modalpopup.js" type="text/javascript"></script>
+<script src="js/functions.js" type="text/javascript"></script>
 </head>
 <body> 
 <!-- Start: page-top-outer -->

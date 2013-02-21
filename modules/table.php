@@ -1,5 +1,6 @@
 <?php
 include_once('config.php');
+include_once('/modules/functions.php');
 if (isset($_SESSION['user_id']))
 {	
 	$pnumber = 0;
@@ -16,6 +17,7 @@ if (isset($_SESSION['user_id']))
 			die("Invalid instance number");
 		} else {
 			$instance = $_GET['instance'];
+			$iid = $instance;
 		}
 		foreach ($DayZ_Servers as $server) {
 			if ($instance == $server->getMissionInstance()) {
@@ -58,14 +60,15 @@ if (isset($_SESSION['user_id']))
 			break;
 		case 4:
 			//$query = "SELECT iv.*, v.class_name FROM instance_vehicle iv inner join vehicle v on iv.world_vehicle_id = v.id WHERE instance_id = '" . $iid . "'";
-			$query = "SELECT iv.*, v.class_name FROM instance_vehicle iv inner join vehicle v on iv.world_vehicle_id = v.id WHERE instance_id = ?";
+			$query = "SELECT iv.*,v.class_name FROM vehicle v JOIN world_vehicle wv ON v.id=wv.vehicle_id JOIN instance_vehicle iv ON iv.world_vehicle_id=wv.id WHERE instance_id=?";
 			$qryInput = $iid;
 			$pagetitle = "All Ingame Objects";
 			break;
 		case 5:
 			//$query = "SELECT * FROM spawns WHERE world = '" . $map . "'";
-			$query = "SELECT * FROM spawns WHERE world = ?";
-			$qryInput = $map;
+			//$query = "SELECT * FROM spawns WHERE world = ?";
+			$query = "SELECT wv.*,v.class_name FROM world_vehicle wv JOIN vehicle v ON v.id=wv.vehicle_id WHERE wv.world_id=?";
+			$qryInput = $world;
 			$pagetitle = "Vehicle spawn locations";
 			break;
 		case 6:

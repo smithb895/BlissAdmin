@@ -1,7 +1,7 @@
 <?php
 if (isset($_SESSION['user_id']))
 {
-	if ($_SESSION['tier'] == 1) {
+	if ($_SESSION['tier'] < 3) {
 		$pagetitle = "Database Admin (Under Construction)";
 		//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('DATABASE ADMIN','{$_SESSION['login']}',NOW())";
 		//$sql2 = mysql_query($query) or die(mysql_error());

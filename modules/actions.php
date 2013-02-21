@@ -11,6 +11,14 @@ if (isset($_SESSION['user_id']))
 		}
 		*/
 		if (isset($_GET["kick"])){
+			if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 3)) {
+				?>
+				<script type="text/javascript">
+					alert('You do not have permission to kick players');
+				</script>
+				<?php
+				die('Insufficient permissions to perform requested action');
+			}
 			$cmd = "kick ".$_GET["kick"];
 			//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('Player Kicked','{$_SESSION['login']}',NOW())";
 			//$sql2 = mysql_query($query) or die(mysql_error());
@@ -25,6 +33,14 @@ if (isset($_SESSION['user_id']))
 			<?php
 		}
 		if (isset($_GET["ban"])){
+			if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 2)) {
+				?>
+				<script type="text/javascript">
+					alert('You do not have permission to ban players');
+				</script>
+				<?php
+				die('Insufficient permissions to perform requested action');
+			}
 			$cmd = "ban ".$_GET["ban"];
 			//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('Player Banned','{$_SESSION['login']}',NOW())";
 			//$sql2 = mysql_query($query) or die(mysql_error());
@@ -57,6 +73,14 @@ if (isset($_SESSION['user_id']))
 			<?php
 		}
 		if (isset($_GET["delete"])){
+			if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 2)) {
+				?>
+				<script type="text/javascript">
+					alert('You do not have permission to delete players');
+				</script>
+				<?php
+				die('Insufficient permissions to perform requested action');
+			}
 			$todelete = preg_replace('#[^0-9+]#', '', $_GET['delete']);
 			//$remquery = "Delete FROM objects WHERE id=".$_GET["delete"];
 			//$result = mysql_query($remquery) or die(mysql_error());
@@ -74,6 +98,14 @@ if (isset($_SESSION['user_id']))
 			<?php
 		}
 		if (isset($_GET["deletecheck"])) {
+			if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 2)) {
+					?>
+					<script type="text/javascript">
+						alert('You do not have permission to delete players');
+					</script>
+					<?php
+					die('Insufficient permissions to perform requested action');
+				}
 			$todelete = preg_replace('#[^0-9+]#', '', $_GET["deletecheck"]);
 			//$remquery = "delete from id using instance_deployable id join survivor s on id.owner_id = s.id where s.id = '".$_GET["deletecheck"]."'";
 			//$result = mysql_query($remquery) or die(mysql_error());
@@ -103,6 +135,14 @@ if (isset($_SESSION['user_id']))
 			<?php
 		}
 		if (isset($_GET["deletespawns"])){
+			if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 1)) {
+				?>
+				<script type="text/javascript">
+					alert('You do not have permission to delete spawns');
+				</script>
+				<?php
+				die('Insufficient permissions to perform requested action');
+			}
 			$todelete = preg_replace('#[^0-9+]#', '', $_GET['deletespawns']);
 			//$remquery = "Delete FROM spawns WHERE ObjectID=".$_GET["deletespawns"];
 			//$result = mysql_query($remquery) or die(mysql_error());
@@ -116,6 +156,14 @@ if (isset($_SESSION['user_id']))
 			<?php
 		}
 		if (isset($_GET["resetlocation"])){
+			if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 3)) {
+				?>
+				<script type="text/javascript">
+					alert('You do not have permission to reset locations');
+				</script>
+				<?php
+				die('Insufficient permissions to perform requested action');
+			}
 			$_getdata = preg_replace('#[^0-9+]#', '', $_GET["resetlocation"]);
 			//$remquery = "update survivor set pos = '[]' WHERE id='".$_GET["resetlocation"]."'";
 			//$result = mysql_query($remquery) or die(mysql_error());

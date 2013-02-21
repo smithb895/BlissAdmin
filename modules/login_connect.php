@@ -1,6 +1,6 @@
 <?php
 //require("/session.php");
-require("/config.php");
+require("/../config.php");
 
 //function hiveconnect($hive_address,$hive_db,$hive_user,$hive_pass) {
 try {

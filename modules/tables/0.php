@@ -89,6 +89,7 @@ if ($answer != ""){
 			$good = preg_replace("[ +]", " ", $playername);
 			
 			// Revised query cleanup
+			/*
 			$safename = '';
 			$validchars = '#[^0-9a-z_ \.,@\-+]#i';
 			if (preg_match($validchars, $good)) {
@@ -104,15 +105,20 @@ if ($answer != ""){
 				}
 				$good = $safename;
 			}
-			$queryInput = $good;
+			*/
+			$queryInput = stringSplitSQL($good, 'name');
+			
+			//$queryInput = $good;
 			//echo $good."<br />";
 			//$query = "select * from (SELECT profile.name, survivor.* from profile, survivor as survivor where profile.unique_id = survivor.unique_id) as T where name LIKE '%". str_replace(" ", "%' OR name LIKE '%", $good). "%' ORDER BY last_updated DESC LIMIT 1";
 			// Improved query below runs more than twice as fast as above (1.4sec VS 0.5sec)
-			$query = "SELECT p.name,s.*,w.name as worldname,i.id as instance_id FROM profile p JOIN survivor s ON p.unique_id=s.unique_id JOIN world w ON w.id=s.world_id JOIN instance i ON i.world_id=w.id WHERE p.name LIKE ? AND i.id=? ORDER BY s.last_updated DESC LIMIT 1";
+			//$query = "SELECT p.name,s.*,w.name as worldname,i.id as instance_id FROM profile p JOIN survivor s ON p.unique_id=s.unique_id JOIN world w ON w.id=s.world_id JOIN instance i ON i.world_id=w.id WHERE p.name LIKE ? AND i.id=? ORDER BY s.last_updated DESC LIMIT 1";
+			$query = "SELECT p.name,s.*,w.name as worldname,i.id as instance_id FROM profile p JOIN survivor s ON p.unique_id=s.unique_id JOIN world w ON w.id=s.world_id JOIN instance i ON i.world_id=w.id WHERE p.name LIKE ".$queryInput." AND i.id=".$instance." ORDER BY s.last_updated DESC LIMIT 1";
 			//$queryInput = '%'.str_replace(" ", '% OR name LIKE %', $good).'%';
 			//echo $queryInput."<br />";
 			$queryHandle = $dbhandle->prepare($query);
-			$queryHandle->execute(array($queryInput,$instance));
+			//$queryHandle->execute(array($queryInput,$instance));
+			$queryHandle->execute();
 			//echo $playername."<br />";
 			$res = null;
 			//$res = mysql_query($query) or die(mysql_error());
@@ -124,9 +130,9 @@ if ($answer != ""){
 			$y = 0;
 			$InventoryPreview = "";
 			$BackpackPreview = "";
-			$ip = $players[$i][1];
-			$ping = $players[$i][2];
-			$name = $players[$i][4];
+			//$ip = $players[$i][1];
+			//$ping = $players[$i][2];
+			//$name = $players[$i][4];
 			$uid = "";
 			
 			$tablerows .= row_online_player($res, $players[$i]);

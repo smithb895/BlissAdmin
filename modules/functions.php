@@ -1,6 +1,8 @@
 <?php
 
 function stringSplitSQL($inputString, $columnName) {
+	$inputString = preg_replace('#^[^0-9a-z_ \.,\-+]#', '', $inputString);
+	$inputString = preg_replace('#[^0-9a-z_ \.,\-+]$#', '', $inputString);
 	$safe = '';
 	$validchars = '#[^0-9a-z_ \.,\-+]#i';
 	if (preg_match($validchars, $inputString)) {
@@ -101,22 +103,31 @@ function fetchBanRows($qryHandle,$count,$cur_page,$page,$per_page) {
 	$last_btn = true;*/
 	//$start = $page * $per_page;
 	$msg = '';
+	$rowStripes = 0;
 	while ($row=$qryHandle->fetch(PDO::FETCH_ASSOC)) {
+		$rowStripes++;
 		//$htmlmsg=htmlentities($row['message']); //HTML entries filter
-		if ($row['ID'] % 2) {
+		if ($rowStripes % 2) {
 			$msg .= '<tr class="alternate-row">';
 		} else {
 			$msg .= '<tr>';
 		}
+		if ($row["ACTIVE"] == 0) {
+			$active = '<td class="glow_green"><img src="images/icons/unbanned.png" alt="Unbanned" title="Unbanned"></td>';
+			//$active = '<td class="glow_red">YES<img src="images/icons/greencheck.png" alt="Unbanned"></td>';
+		} else {
+			$active = '<td class="glow_red"><img src="images/icons/banned.png" alt="Banned" title="Banned"></td>';
+			//$active = '<td class="glow_green">NO</td>';
+		}
 		$msg .= '
 							<td><input name="delban[]" value="'.$row["ID"].'" type="checkbox"/></td>
 							<td>'.$row["ID"].'</td>
-							<td>'.$row["GUID_IP"].'</td>
+							<td><a title="Cross-reference Check" onClick="fetchDBRows(\'bans\',\'guidip\',\''.$row["GUID_IP"].'\',1)">'.$row["GUID_IP"].'</a></td>
 							<td>'.$row["LENGTH"].'</td>
 							<td>'.$row["REASON"].'</td>
-							<td>'.$row["ADMIN"].'</td>
+							<td><a title="Cross-reference Check" onClick="fetchDBRows(\'bans\',\'admin\',\''.$row["ADMIN"].'\',1)">'.$row["ADMIN"].'</a></td>
 							<td>'.$row["DATE_TIME"].'</td>
-							<td>'.$row["ACTIVE"].'</td>
+							'.$active.'
 						</tr>';
 	}
 	
@@ -134,17 +145,19 @@ function fetchPlayerDBRows($qryHandle,$count,$cur_page,$page,$per_page) {
 	$last_btn = true;*/
 	$start = $page * $per_page;
 	$msg = '';
+	$rowStripes = 0;
 	while ($row=$qryHandle->fetch(PDO::FETCH_ASSOC)) {
+		$rowStripes++;
 		//$htmlmsg=htmlentities($row['message']); //HTML entries filter
-		if ($row['ID'] % 2) {
+		if ($rowStripes % 2) {
 			$msg .= '<tr class="alternate-row">';
 		} else {
 			$msg .= '<tr>';
 		}
 		$msg .= '
-						<td>'.$row["GUID"].'</td>
-						<td>'.$row["KNOWN_NAMES"].'</td>
-						<td>'.$row["KNOWN_IPS"].'</td>
+						<td><a title="Cross-reference Check" onClick="fetchDBRows(\'players\',\'guid\',\''.$row["GUID"].'\',1)">'.$row["GUID"].'</a></td>
+						<td><a title="Cross-reference Check" onClick="fetchDBRows(\'players\',\'known_names\',\''.$row["KNOWN_NAMES"].'\',1)">'.$row["KNOWN_NAMES"].'</a></td>
+						<td><a title="Cross-reference Check" onClick="fetchDBRows(\'players\',\'known_ips\',\''.$row["KNOWN_IPS"].'\',1)">'.$row["KNOWN_IPS"].'</a></td>
 						<td>'.$row["LAST_SEEN"].'</td>
 						<td>'.$row["FIRST_SEEN"].'</td>
 						<td>'.$row["SERVER"].'</td>

@@ -25,11 +25,13 @@ while ($row = $queryAdminLog->fetch(PDO::FETCH_ASSOC)) {
 ?>
 <script src="js/dashboard.js" type="text/javascript"></script>
 <div id="page-heading">
+	<span id='topleft_arrow'></span>
 <?php
 	echo "<title>".$pagetitle." - ".$sitename."</title>";
 	echo "<h1>".$pagetitle."</h1>";
 
 ?>
+	<span id='topright_arrow'></span>
 </div>
 
 <div id="main-page-content">
@@ -40,10 +42,11 @@ while ($row = $queryAdminLog->fetch(PDO::FETCH_ASSOC)) {
 			<?php
 				global $DayZ_Servers;
 				foreach ($DayZ_Servers as $dayz_server) {
-					echo '<option value="'.$dayz_server->getMissionInstance().'">'.$dayz_server->getServerName().' - '.$dayz_server->getServerMap().' (Instance '.$dayz_server->getMissionInstance().')</option>';
+					echo '<option servername="'.$dayz_server->getServerName().'" servermap="'.$dayz_server->getServerMap().'" value="'.$dayz_server->getMissionInstance().'">'.$dayz_server->getServerName().' - '.$dayz_server->getServerMap().' (Instance '.$dayz_server->getMissionInstance().')</option>';
 				}
 			?>
 		</select>
+		<span id="loadingicon"><img src="images\icons\gifs\ajax-loader.gif"/></span>
 		<br />
 		<br />
 		<h2>Current Players - <?php echo '<span id="servername">'.$DayZ_Servers[0]->getServerName().'</span> - <span id="servermap">'.$DayZ_Servers[0]->getServerMap().'</span>'; ?></h2>

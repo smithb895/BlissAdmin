@@ -171,8 +171,9 @@ function row_online_player($row, $player){
 	if(array_key_exists(1,$Worldspace)){$x = $Worldspace[1];}
 	$dead = ($row['is_dead'] ? '_dead' : '');
 	
-	$Inventory = array();
-	if (is_array($row['inventory'])) {
+	//$Inventory = array();
+	
+	//if (is_array($row['inventory'])) {
 		$Inventory = $row['inventory'];
 		$Inventory = str_replace("|", ",", $Inventory);
 		$Inventory = json_decode($Inventory);
@@ -187,7 +188,11 @@ function row_online_player($row, $player){
 				$Inventory = $Inventory[1];
 			}
 		}
-	}
+	//}
+	//echo '<script> alert("'.print_r($Inventory[0]).'"); </script>';
+	//echo '<div>'.print_r($Inventory[0]).'</div>';
+	//echo '<div>'.print_r($Inventory[1]).'</div>';
+	//echo '<div>'.$row['inventory'].'</div>';
 	$InventoryPreview = "";
 	$limit = 6;
 	$pcount = "";
@@ -195,7 +200,13 @@ function row_online_player($row, $player){
 		if(array_key_exists($p,$Inventory)){
 			$curitem = $Inventory[$p];
 			$pcount = "";
-			if (is_array($curitem)){$curitem = $Inventory[$p][0]; $pcount = ' - '.$Inventory[$p][1].' rounds'; }
+			if (is_array($curitem)) {
+				$curitem = $Inventory[$p][0];
+				$pcount = ' - '.$Inventory[$p][1].' rounds';
+			}
+			if (strlen($curitem) < 1) {
+				$curitem = 'nullitem';
+			}
 			$InventoryPreview .= '<div class="preview_gear_slot" style="margin-top:0px;width:47px;height:47px;"><img style="max-width:43px;max-height:43px;" src="images/thumbs/'.$curitem.'.png" title="'.$curitem.$pcount.'" alt="'.$curitem.$pcount.'"/></div>';
 		} else {
 			$InventoryPreview .= '<div class="preview_gear_slot" style="margin-top:0px;width:47px;height:47px;"></div>';
@@ -265,7 +276,7 @@ function row_online_player($row, $player){
 				<td align=\"center\" class=\"gear_preview\" style=\"vertical-align:middle;\">".$curmap."</td>
 				<td align=\"center\" class=\"gear_preview\">".$InventoryPreview."</td>
 				<td align=\"center\" class=\"gear_preview\">".$BackpackPreview."</td>
-				<tr>";
+				</tr>";
 	return $tablerow;	
 }
 

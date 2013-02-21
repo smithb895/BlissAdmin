@@ -1,12 +1,37 @@
 <?php
-if (isset($_SESSION['user_id']))
-{
-	global $iid;
+if (isset($_SESSION['user_id'])) {
+	if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 4)) {
+		?>
+		<script type="text/javascript">
+			alert('You do not have permission to view maps');
+		</script>
+		<?php
+		die('Insufficient permissions to perform requested action');
+	}
+	if (isset($_GET['instance_id'])) {
+		if (preg_match('#[^0-9+]#', $_GET['instance_id'])) {
+			die("Invalid instance number");
+		} else {
+			$instance = $_GET['instance_id'];
+		}
+		foreach ($DayZ_Servers as $server) {
+			if ($instance == $server->getMissionInstance()) {
+				$iid = $instance;
+				$serverip = $server->getServerIP();
+				$serverport = $server->getServerPort();
+				$rconpassword = $server->getRconPassword();
+				$map = $server->getServerMap();
+				$world = $server->getWorldID();
+			}
+		}
+	}
+
+	/*global $iid;
 	global $serverip;
 	global $serverport;
 	global $rconpassword;
 	global $map;
-	global $world;
+	global $world;*/
 
 	switch($_GET['show']) {
 	case 0:

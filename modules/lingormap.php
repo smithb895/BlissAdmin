@@ -1,6 +1,13 @@
 <?php
-if (isset($_SESSION['user_id']))
-{
+if (isset($_SESSION['user_id'])) {
+	if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 4)) {
+		?>
+		<script type="text/javascript">
+			alert('You do not have permission to view maps');
+		</script>
+		<?php
+		die('Insufficient permissions to perform requested action');
+	}
 	switch($_GET['show']) {
 	case 0:
 		$title = 'Recent Players';

@@ -17,6 +17,18 @@ global $world;
 //mysql_select_db($dbName) or die (mysql_error());
 
 if (isset($_SESSION['user_id'])) {
+	if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 4)) {
+		?>
+		<script type="text/javascript">
+			alert('You do not have permission to view maps');
+		</script>
+		<?php
+		echo '
+		<div id="page-heading">
+			<h1>Access Denied</h1>
+		</div>';
+		die('Insufficient permissions to perform requested action');
+	}
 	if (isset($_GET['instance_id'])) {
 		$_current_instance = preg_replace('#[^0-9+]#', '', $_GET['instance_id']);
 		foreach ($DayZ_Servers as $server) {
@@ -70,7 +82,7 @@ if (isset($_SESSION['user_id'])) {
 				$KillS = $row['survivor_kills'];
 				$Duration = $row['survival_time'];
 				$icon = "images/icons/player".($row['is_dead'] ? '_dead' : '').".png";
-				$description = "<h2><a href=\"admin.php?view=info&show=1&id=".$uid."\">".htmlspecialchars($name, ENT_QUOTES)." - ".$uid."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/models/".str_replace('"', '', $model).".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \">PlayerID: ".$id."<p>CharatcerID: ".$uid."<p>Zed Kills: ".$KillsZ."<p>Bandit Kills: ".$KillsB."<p>Alive Duration: ".$Duration."<p></td></tr></table>";
+				$description = "<h2><a href=\"admin.php?view=info&show=1&cid=".$id."\">".htmlspecialchars($name, ENT_QUOTES)." - ".$uid."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/models/".str_replace('"', '', $model).".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \">PlayerID: ".$id."<p>CharatcerID: ".$uid."<p>Zed Kills: ".$KillsZ."<p>Bandit Kills: ".$KillsB."<p>Alive Duration: ".$Duration."<p></td></tr></table>";
 				
 
 				$output[] = array(
@@ -113,7 +125,7 @@ if (isset($_SESSION['user_id'])) {
 				$KillS = $row['survivor_kills'];
 				$Duration = $row['survival_time'];
 				$icon = "images/icons/player".($row['is_dead'] ? '_dead' : '').".png";
-				$description = "<h2><a href=\"admin.php?view=info&show=1&id=".$uid."\">".htmlspecialchars($name, ENT_QUOTES)." - ".$uid."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/models/".str_replace('"', '', $model).".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \">PlayerID: ".$id."<p>CharatcerID: ".$uid."<p>Zed Kills: ".$KillsZ."<p>Bandit Kills: ".$KillsB."<p>Alive Duration: ".$Duration."<p></td></tr></table>";
+				$description = "<h2><a href=\"admin.php?view=info&show=1&cid=".$id."\">".htmlspecialchars($name, ENT_QUOTES)." - ".$uid."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/models/".str_replace('"', '', $model).".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \">PlayerID: ".$id."<p>CharatcerID: ".$uid."<p>Zed Kills: ".$KillsZ."<p>Bandit Kills: ".$KillsB."<p>Alive Duration: ".$Duration."<p></td></tr></table>";
 						
 
 				$output[] = array(
@@ -156,7 +168,7 @@ if (isset($_SESSION['user_id'])) {
 				$KillS = $row['survivor_kills'];
 				$Duration = $row['survival_time'];
 				$icon = "images/icons/player".($row['is_dead'] ? '_dead' : '').".png";
-				$description = "<h2><a href=\"admin.php?view=info&show=1&id=".$uid."\">".htmlspecialchars($name, ENT_QUOTES)." - ".$uid."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/models/".str_replace('"', '', $model).".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \">PlayerID: ".$id."<p>CharatcerID: ".$uid."<p>Zed Kills: ".$KillsZ."<p>Bandit Kills: ".$KillsB."<p>Alive Duration: ".$Duration."<p></td></tr></table>";
+				$description = "<h2><a href=\"admin.php?view=info&show=1&cid=".$id."\">".htmlspecialchars($name, ENT_QUOTES)." - ".$uid."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/models/".str_replace('"', '', $model).".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \">PlayerID: ".$id."<p>CharatcerID: ".$uid."<p>Zed Kills: ".$KillsZ."<p>Bandit Kills: ".$KillsB."<p>Alive Duration: ".$Duration."<p></td></tr></table>";
 				
 
 				$output[] = array(
@@ -199,7 +211,7 @@ if (isset($_SESSION['user_id'])) {
 				$KillS = $row['survivor_kills'];
 				$Duration = $row['survival_time'];
 				$icon = "images/icons/player".($row['is_dead'] ? '_dead' : '').".png";
-				$description = "<h2><a href=\"admin.php?view=info&show=1&id=".$uid."\">".htmlspecialchars($name, ENT_QUOTES)." - ".$uid."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/models/".str_replace('"', '', $model).".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \">PlayerID: ".$id."<p>CharatcerID: ".$uid."<p>Zed Kills: ".$KillsZ."<p>Bandit Kills: ".$KillsB."<p>Alive Duration: ".$Duration."<p></td></tr></table>";
+				$description = "<h2><a href=\"admin.php?view=info&show=1&cid=".$id."\">".htmlspecialchars($name, ENT_QUOTES)." - ".$uid."</a></h2><table><tr><td><img style=\"max-width: 100px;\" src=\"images/models/".str_replace('"', '', $model).".png\"></td><td>&nbsp;</td><td style=\"vertical-align:top; \">PlayerID: ".$id."<p>CharatcerID: ".$uid."<p>Zed Kills: ".$KillsZ."<p>Bandit Kills: ".$KillsB."<p>Alive Duration: ".$Duration."<p></td></tr></table>";
 				
 
 				$output[] = array(
@@ -218,7 +230,8 @@ if (isset($_SESSION['user_id'])) {
 			//$sql = "select iv.id, v.class_name, 0 owner_id, iv.worldspace, iv.inventory, iv.instance_id, iv.parts, fuel, oc.type, damage from instance_vehicle iv inner join vehicle v on iv.world_vehicle_id = v.id inner join object_classes oc on v.class_name = oc.classname where iv.instance_id = '" . $iid . "'";
 			
 			//$result = mysql_query($sql);
-			$query = $dbhandle->prepare("select iv.id, v.class_name, 0 owner_id, iv.worldspace, iv.inventory, iv.instance_id, iv.parts, fuel, oc.type, damage from instance_vehicle iv inner join vehicle v on iv.world_vehicle_id = v.id inner join object_classes oc on v.class_name = oc.classname where iv.instance_id = ?");
+			//$query = $dbhandle->prepare("select iv.id, v.class_name, 0 owner_id, iv.worldspace, iv.inventory, iv.instance_id, iv.parts, fuel, oc.type, damage from instance_vehicle iv inner join vehicle v on iv.world_vehicle_id = v.id inner join object_classes oc on v.class_name = oc.classname where iv.instance_id = ?");
+			$query = $dbhandle->prepare("SELECT iv.*,v.class_name,oc.type FROM instance_vehicle iv JOIN world_vehicle wv ON iv.world_vehicle_id=wv.id JOIN vehicle v ON v.id=wv.vehicle_id JOIN object_classes oc ON oc.classname=v.class_name WHERE iv.instance_id=?");
 			$query->execute(array($iid));
 			$result = $query->fetchAll(PDO::FETCH_ASSOC);
 			$output = array();

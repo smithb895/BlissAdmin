@@ -7,6 +7,19 @@ require('../config.php');
 require('hive_connect.php');
 require('import_vehicles.php');
 
+if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 2)) {
+	?>
+	<script type="text/javascript">
+		alert('You do not have permission to manage VIPs');
+	</script>
+	<?php
+	echo '
+	<div id="page-heading">
+		<h1>Access Denied</h1>
+	</div>';
+	die('Insufficient permissions to perform requested action');
+}
+
 $worldID = preg_replace('#[^0-9]#', '', $_POST['worldID']);
 
 $target_path = 'uploads/';

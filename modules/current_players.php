@@ -169,8 +169,8 @@ if ($answer != ""){
 			echo '<tr>';
 		}
 		echo '
-				<td><a href="admin.php?view=info&show=1&id='.$res['unique_id'].'&cid='.$res['id'].'" alt=View player info>'.$playername.'</a></td>
-				<td><a href="admin.php?view=info&show=1&id='.$res['unique_id'].'&cid='.$res['id'].'" alt=View player info>'.$res['unique_id'].'</a></td>
+				<td><a href="admin.php?view=info&show=1&id='.$res['unique_id'].'&cid='.$player_rowid.'" alt=View player info>'.$playername.'</a></td>
+				<td><a href="admin.php?view=info&show=1&id='.$res['unique_id'].'&cid='.$player_rowid.'" alt=View player info>'.$res['unique_id'].'</a></td>
 				<td>'.$player_guid.'</td>
 				<td>'.$player_ip.'</td>
 				<td>'.$res['zombie_kills'].'</td>
