@@ -120,68 +120,94 @@ if ($answer != ""){
 			
 			$player_ip = explode(':',$players[$i][1])[0];
 			$player_guid = preg_replace('#(\(OK\))#', '', $players[$i][3]);
-			$player_ping = $players[$i][2];
-			$player_rowid = $res['id'];
-			$pos_array = preg_split('#(,)#', preg_replace('#[^0-9\.,+]#', '', $res['worldspace']));
-			if (count($pos_array) > 2) {
-				$pos_x = round($pos_array[1], -2) / 100;
-				$pos_y = round($pos_array[2], -2) / 100;
-				switch (strlen($pos_x)) {
-					case 1:
-						$pos_x = '00'.$pos_x;
-						break;
-					case 2:
-						$pos_x = '0'.$pos_x;
-						break;
-					default:
-						break;
-				}
-				switch (strlen($pos_y)) {
-					case 1:
-						$pos_y = '00'.$pos_y;
-						break;
-					case 2:
-						$pos_y = '0'.$pos_y;
-						break;
-					default:
-						break;
-				}
-				$player_pos = "$pos_x,$pos_y";
+			if (isset($players[$i][2])) {
+				$player_ping = $players[$i][2];
 			} else {
-				$player_pos = 'unknown';
+				$player_ping = 0;
 			}
 			
-			$hours_old = $res['hours_old'];
-			$days_old = round(($hours_old / 24), 0);
-			$remainder = round(($hours_old % 24), 0);
-			if ($days_old < 1) {
-				$player_age = "$hours_old hrs";
+			if ($res > 0) {
+				$player_rowid = $res['id'];
+				$pos_array = preg_split('#(,)#', preg_replace('#[^0-9\.,+]#', '', $res['worldspace']));
+				if (count($pos_array) > 2) {
+					$pos_x = round($pos_array[1], -2) / 100;
+					$pos_y = round($pos_array[2], -2) / 100;
+					switch (strlen($pos_x)) {
+						case 1:
+							$pos_x = '00'.$pos_x;
+							break;
+						case 2:
+							$pos_x = '0'.$pos_x;
+							break;
+						default:
+							break;
+					}
+					switch (strlen($pos_y)) {
+						case 1:
+							$pos_y = '00'.$pos_y;
+							break;
+						case 2:
+							$pos_y = '0'.$pos_y;
+							break;
+						default:
+							break;
+					}
+					$player_pos = "$pos_x,$pos_y";
+				} else {
+					$player_pos = 'unknown';
+				}
+				
+				$hours_old = $res['hours_old'];
+				$days_old = round(($hours_old / 24), 0);
+				$remainder = round(($hours_old % 24), 0);
+				if ($days_old < 1) {
+					$player_age = "$hours_old hrs";
+				} else {
+					$player_age = "$days_old days";
+					if ($remainder > 0) {
+						$player_age .= "<br />$remainder hrs";
+					}
+				}
+				$unique_id = $res['unique_id'];
+				$zombie_kills = $res['zombie_kills'];
+				$bandit_kills = $res['bandit_kills'];
+				$survivor_kills = $res['survivor_kills'];
+				$last_updated = $res['last_updated'];
 			} else {
-				$player_age = "$days_old days";
-				if ($remainder > 0) {
-					$player_age .= "<br />$remainder hrs";
+				$unique_id = 0;
+				$zombie_kills = 0;
+				$bandit_kills = 0;
+				$survivor_kills = 0;
+				$last_updated = 'unknown';
+				$player_rowid = 0;
+				$player_age = 0;
+				$player_pos = 'unknown';
+				if (!isset($playername)) {
+					$playername = 'unknown';
 				}
 			}
-		}
-		if ($i % 2) {
-			echo '<tr class="alternate-row">';
+			if ($i % 2) {
+				echo '<tr class="alternate-row">';
+			} else {
+				echo '<tr>';
+			}
+			echo '
+					<td><a href="admin.php?view=info&show=1&id='.$unique_id.'&cid='.$player_rowid.'" alt=View player info>'.$playername.'</a></td>
+					<td><a href="admin.php?view=info&show=1&id='.$unique_id.'&cid='.$player_rowid.'" alt=View player info>'.$unique_id.'</a></td>
+					<td>'.$player_guid.'</td>
+					<td>'.$player_ip.'</td>
+					<td>'.$zombie_kills.'</td>
+					<td>'.$bandit_kills.'</td>
+					<td>'.$survivor_kills.'</td>
+					<td>'.$player_pos.'</td>
+					<td>'.$player_age.'</td>
+					<td>'.$last_updated.'</td>
+					<td>'.$player_ping.'</td>
+				</tr>';
+			//echo "<br /><br />";
 		} else {
-			echo '<tr>';
+			echo '<td colspan=11>No players online</td>';
 		}
-		echo '
-				<td><a href="admin.php?view=info&show=1&id='.$res['unique_id'].'&cid='.$player_rowid.'" alt=View player info>'.$playername.'</a></td>
-				<td><a href="admin.php?view=info&show=1&id='.$res['unique_id'].'&cid='.$player_rowid.'" alt=View player info>'.$res['unique_id'].'</a></td>
-				<td>'.$player_guid.'</td>
-				<td>'.$player_ip.'</td>
-				<td>'.$res['zombie_kills'].'</td>
-				<td>'.$res['bandit_kills'].'</td>
-				<td>'.$res['survivor_kills'].'</td>
-				<td>'.$player_pos.'</td>
-				<td>'.$player_age.'</td>
-				<td>'.$res['last_updated'].'</td>
-				<td>'.$player_ping.'</td>
-			</tr>';
-		//echo "<br /><br />";
 	}
 }
 
