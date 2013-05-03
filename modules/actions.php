@@ -1,7 +1,7 @@
 <?php
 //error_reporting(E_ALL);
 //ini_set('display_errors',1);
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {	
 	//if (isset($_GET["url"])){
 		/*
@@ -11,7 +11,7 @@ if (isset($_SESSION['user_id']))
 		}
 		*/
 		if (isset($_GET["kick"])){
-			if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 3)) {
+			if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 4)) {
 				?>
 				<script type="text/javascript">
 					alert('You do not have permission to kick players');
@@ -33,7 +33,7 @@ if (isset($_SESSION['user_id']))
 			<?php
 		}
 		if (isset($_GET["ban"])){
-			if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 2)) {
+			if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 4)) {
 				?>
 				<script type="text/javascript">
 					alert('You do not have permission to ban players');
