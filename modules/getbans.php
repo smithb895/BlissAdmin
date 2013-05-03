@@ -1,6 +1,6 @@
 <?php
-//error_reporting(E_ALL);
-//ini_set('display_errors',1);
+error_reporting(E_ALL);
+ini_set('display_errors',1);
 
 include_once('/../config.php');
 include_once('/../session.php');
@@ -28,7 +28,12 @@ $first_btn = true;
 $last_btn = true;
 $start = $page * $per_page;
 
-
+if (isset($_POST['banlist'])) {
+	$banlist = preg_replace('#[^0-9]#', '', $_POST['banlist']);
+} else {
+	$banlist = 0;
+}
+$banTableName = '`'.strtolower($banlistnames[$banlist]).'`';
 
 if (isset($_POST['search'])) {
 	$searchString = $_POST['search'];
@@ -66,11 +71,11 @@ if (isset($_POST['search'])) {
 	$queryString = stringSplitSQL($searchString, $column);
 	
 	// Ugly, but it works... :-/
-	$querySearchCount = $dbhandle3->prepare("SELECT COUNT(*) FROM `bans` WHERE ".$column." LIKE ".$queryString);
+	$querySearchCount = $dbhandle3->prepare("SELECT COUNT(*) FROM ".$banTableName." WHERE ".$column." LIKE ".$queryString);
 	$querySearchCount->execute();
 	$count = $querySearchCount->fetchColumn();
 	if ($count > 0) {
-		$querySearchBansDB = $dbhandle3->prepare("SELECT * FROM `bans` WHERE ".$column." LIKE ".$queryString." ORDER BY `ID` DESC LIMIT ".$start.",".$per_page);
+		$querySearchBansDB = $dbhandle3->prepare("SELECT * FROM ".$banTableName." WHERE ".$column." LIKE ".$queryString." ORDER BY `ID` DESC LIMIT ".$start.",".$per_page);
 		$querySearchBansDB->execute();
 		
 		$msg = fetchBanRows($querySearchBansDB,$count,$cur_page,$page,$per_page);
@@ -84,7 +89,7 @@ if (isset($_POST['search'])) {
 	$bansToDelete = preg_replace('#[^0-9+]#', '', $_POST['delban']); // array
 	for ($i=0; $i< count($bansToDelete); $i++) {
 		// Get GUID or IP for ban to be removed
-		$queryBan = $dbhandle3->prepare('SELECT `GUID_IP` FROM `bans` WHERE `ID`=?');
+		$queryBan = $dbhandle3->prepare('SELECT `GUID_IP` FROM '.$banTableName.' WHERE `ID`=?');
 		$queryBan->execute(array($bansToDelete[$i]));
 		$banGUID_IP = $queryBan->fetchColumn();
 		
@@ -93,7 +98,7 @@ if (isset($_POST['search'])) {
 		$queryLog->execute(array('UNBAN: '.$banGUID_IP,$_SESSION['login']));
 		
 		// Remove ban
-		$queryDelBan = $dbhandle3->prepare('UPDATE `bans` SET `ACTIVE`=0 WHERE `ID`=?');
+		$queryDelBan = $dbhandle3->prepare('UPDATE '.$banTableName.' SET `ACTIVE`=0 WHERE `ID`=?');
 		$queryDelBan->execute(array($bansToDelete[$i]));
 		$bansRemoved += $queryDelBan->rowCount();
 		
@@ -117,7 +122,7 @@ if (isset($_POST['search'])) {
 		die('GUID/IP is too long.  Max 32 characters.');
 	}
 	if (isset($_POST['reason'])) {
-		$banREASON = preg_replace('#[^0-9a-z\., \[\]\{\}\(\)\-+]#i', '', $_POST['reason']);
+		$banREASON = preg_replace('#[^0-9a-z\., \[\]\{\}\(\)\-\#/+]#i', '', $_POST['reason']);
 		if (strlen($banREASON) > 64) {
 			die('Ban reason is too long.  Must be 64 characters or less.');
 		}
@@ -162,7 +167,8 @@ if (isset($_POST['search'])) {
 	
 	//$banGUID_IP = '"'.$banGUID_IP.'"';
 	// Check to make sure ban doesn't exists already
-	$queryCheckExisting = $dbhandle3->prepare('SELECT `ID`,`ACTIVE`,`NUMBANS` FROM `bans` WHERE `GUID_IP`=?');
+	$queryCheckExisting = $dbhandle3->prepare('SELECT `ID`,`ACTIVE`,`NUMBANS` FROM '.$banTableName.' WHERE `GUID_IP`=?');
+	//$queryCheckExisting->bindValue(1, $banTableName, PDO::PARAM_STR); // Doesn't work
 	$queryCheckExisting->bindValue(1, $banGUID_IP, PDO::PARAM_STR);
 	$queryCheckExisting->execute();
 	$banExistsResult = $queryCheckExisting->fetchAll(PDO::FETCH_ASSOC);
@@ -175,13 +181,19 @@ if (isset($_POST['search'])) {
 		if ($banExistsResult[0]['ACTIVE'] == 0) {
 			// log the ban
 			$queryLog = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES (?,?,NOW())");
-			$queryLog->execute(array('BAN: '.$banGUID_IP,$_SESSION['login']));
+			$queryLog->execute(array('REBAN: '.$banGUID_IP,$_SESSION['login']));
 			
 			$banNumber = $banExistsResult[0]['NUMBANS'] + 1; // +1 to times player has been banned, for reban
-			$queryReban = $dbhandle3->prepare("UPDATE `bans` SET `ACTIVE`=1,`NUMBANS`=? WHERE `ID`=?");
+			$queryReban = $dbhandle3->prepare("UPDATE ".$banTableName." SET `ACTIVE`=1,`NUMBANS`=?,`REASON`=?,`LENGTH`=? WHERE `ID`=?");
+			//$queryReban->bindParam(1, $banTableName, PDO::PARAM_STR);
 			$queryReban->bindParam(1, $banNumber, PDO::PARAM_INT);
-			$queryReban->bindParam(2, $banExistsResult[0]['ID'], PDO::PARAM_INT);
+			$queryReban->bindParam(2, $banREASON, PDO::PARAM_STR);
+			$queryReban->bindParam(3, $banLENGTH, PDO::PARAM_INT);
+			$queryReban->bindParam(4, $banExistsResult[0]['ID'], PDO::PARAM_INT);
 			$queryReban->execute();
+			// Log the ban
+			//$queryLog = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES (?,?,NOW())");
+			//$queryLog->execute(array('BAN: '.$banGUID_IP,$_SESSION['login']));
 			
 			$msg = "Successfully rebanned GUID/IP!
 					<script>
@@ -200,7 +212,8 @@ if (isset($_POST['search'])) {
 		$queryLog = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES (?,?,NOW())");
 		$queryLog->execute(array('BAN: '.$banGUID_IP,$_SESSION['login']));
 		
-		$queryAddBan = $dbhandle3->prepare("INSERT INTO `bans` (`GUID_IP`,`LENGTH`,`REASON`,`ADMIN`,`DATE_TIME`) VALUES (:guid_ip, :length, :reason, :admin, NOW())");
+		$queryAddBan = $dbhandle3->prepare("INSERT INTO ".$banTableName." (`GUID_IP`,`LENGTH`,`REASON`,`ADMIN`,`DATE_TIME`) VALUES (:guid_ip, :length, :reason, :admin, NOW())");
+		//$queryAddBan->bindParam(':tablename', $banTableName, PDO::PARAM_STR);
 		$queryAddBan->bindParam(':guid_ip', $banGUID_IP, PDO::PARAM_STR);
 		$queryAddBan->bindParam(':length', $banLENGTH, PDO::PARAM_INT);
 		$queryAddBan->bindParam(':reason', $banREASON, PDO::PARAM_STR);
@@ -240,12 +253,13 @@ if (isset($_POST['search'])) {
 	//$msg = "<tr><td colspan='8'>Successfully added $bansAdded bans.</td></tr>";
 } else {
 	/* -----Total count--- */
-	$query_pag_num = 'SELECT COUNT(*) FROM `bans`'; // Total records
+	$query_pag_num = 'SELECT COUNT(*) FROM '.$banTableName; // Total records
 	$queryHandle2 = $dbhandle3->prepare($query_pag_num);
 	$queryHandle2->execute();
 	$count = $queryHandle2->fetchColumn();
 	if ($count > 0) {
-		$queryHandle = $dbhandle3->prepare("SELECT * FROM `bans` ORDER BY `ID` DESC LIMIT :start,:per_page");
+		$queryHandle = $dbhandle3->prepare("SELECT * FROM ".$banTableName." ORDER BY `ID` DESC LIMIT :start,:per_page");
+		//$queryHandle->bindParam(':tablename', $banTableName); // doesn't seem to work
 		$queryHandle->bindParam(':start', $start, PDO::PARAM_INT);
 		$queryHandle->bindParam(':per_page', $per_page, PDO::PARAM_INT);
 		$queryHandle->execute();

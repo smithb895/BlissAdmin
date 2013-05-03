@@ -1,12 +1,19 @@
 <?php
 //error_reporting(E_ALL);
 //ini_set('display_errors',1);
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['login'])) {
 	include_once('config.php');
 	//include_once('hive_connect.php');
 	include_once('modules/login_connect.php');
-	if ($_SESSION['tier'] < 4) {
-		$pagetitle = "Manage Bans (Under Construction)";
+	if ($_SESSION['tier'] < 5) {
+		if (isset($_GET['banlist'])) {
+			$banlist = preg_replace('#[^0-9]#', '', $_GET['banlist']);
+		} else {
+			$banlist = 0;
+		}
+		$banListName = $banlistnames[$banlist];
+		$pagename = "Manage Bans";
+		$pagetitle = "Manage Bans - <span id='banlist' banlistid='".$banlist."'>$banListName</span> (Under Construction)";
 		//include_once('modules/bans_connect.php');
 		//include_once('rcon.php');
 		//global $DayZ_Servers;
@@ -43,7 +50,7 @@ if (isset($_SESSION['user_id'])) {
 	<script src="js/functions.js" type="text/javascript"></script>
 	<script src="js/bansdb.js" type="text/javascript"></script>
 	
-	<div id="dvPopup" style="display:none; width:900px; height: 450px; border:4px solid #000000; background-color:#FFFFFF;">
+	<!--<div id="dvPopup" style="display:none; width:900px; height: 450px; border:4px solid #000000; background-color:#FFFFFF;">
 					<a id="closebutton" style="float:right;" href="#" onclick="HideModalPopup('dvPopup'); return false;"><img src="images/table/action_delete.gif" alt="" /></a><br />Not working yet
 					<?php //include ('modules/addban.php'); ?>
 	</div>
@@ -51,11 +58,11 @@ if (isset($_SESSION['user_id'])) {
 	<div id="dvPopup2" style="display:none; width:900px; height: 450px; border:4px solid #000000; background-color:#FFFFFF;">
 					<a id="closebutton" style="float:right;" href="#" onclick="HideModalPopup('dvPopup2');"><img src="images/table/action_delete.gif" alt="" /></a><br />
 					<span id='dvPopup2_content'></span>
-	</div>	
+	</div>-->
 	
 	<div id="page-heading">
 <?php
-	echo "<title>".$pagetitle." - ".$sitename."</title>";
+	echo "<title>".$pagename." - ".$sitename."</title>";
 	echo "<h1>".$pagetitle."</h1>";
 ?>
 	</div>
@@ -121,7 +128,7 @@ if (isset($_SESSION['user_id'])) {
 								</select>
 								<input type="submit" id="add_ban_btn" onClick="addBan(); return false;" value="Ban" />
 								Reason for Ban:<br />
-								<input name="reason" type="text" value="Enter Reason for Ban" onblur="if (this.value=='') { this.value='Enter Reason for Ban'; }" onfocus="if (this.value=='Enter Reason for Ban') { this.value=''; }" class="top-search-inp" /><br />
+								<input name="reason" type="text" value="Cheating/Hacking" onblur="if (this.value=='') { this.value='Cheating/Hacking'; }" onfocus="if (this.value=='Cheating/Hacking') { this.value=''; }" class="top-search-inp" /><br />
 							</form>
 							<div class="clear"></div>
 						</div>

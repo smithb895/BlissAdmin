@@ -13,7 +13,7 @@ ini_set('display_errors', 1);
 */
 
 require("/../config.php");
-//require("/../session.php");
+require("/../session.php");
 include_once("/../modules/bans_connect.php");
 
 // Test line, make sure to comment out foreach loop and mysql stuph when testing
@@ -21,14 +21,19 @@ include_once("/../modules/bans_connect.php");
 
 
 // Set pathname of bans.txt
-$bansFile = $localbansfile;
-$outputBansFile = $localbansfile;
-
+if (isset($_GET['banlist'])) {
+	$banlist = preg_replace('#[^0-9]#', '', $_GET['banlist']);
+} else {
+	$banlist = 0;
+}
+$bansFile = $banlists[$banlist];
+$banTableName = '`'.strtolower($banlistnames[$banlist]).'`';
+$outputBansFile = $bansFile;
 // Load file into an array, each line is element
 $bansArray = file($bansFile);
 
 //  Prepare SQL statement
-$qryCount = $dbhandle3->query('SELECT count(`ID`) FROM `bans`');
+$qryCount = $dbhandle3->query('SELECT count(`ID`) FROM '.$banTableName);
 //$qryCount->execute();
 $totalBans = $qryCount->fetchColumn();
 
@@ -36,7 +41,7 @@ $totalBans = $qryCount->fetchColumn();
 //$qryReban = $dbhandle3->prepare('UPDATE `bans` SET `ACTIVE`=1 WHERE `ID`=? LIMIT 1');
 //$qryUnban = $dbhandle3->prepare('UPDATE `bans` SET `ACTIVE`=0 WHERE `ID`=? LIMIT 1');
 //$queryCheckExisting = $dbhandle3->prepare('SELECT * FROM `bans` WHERE `GUID_IP` LIKE ? AND `ACTIVE`=0');
-$queryBansDB = $dbhandle3->prepare('SELECT `GUID_IP`,`LENGTH`,`REASON`,`ACTIVE` FROM `bans`');
+$queryBansDB = $dbhandle3->prepare('SELECT `GUID_IP`,`LENGTH`,`REASON`,`ACTIVE` FROM '.$banTableName);
 $queryBansDB->execute();
 
 

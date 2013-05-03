@@ -19,9 +19,11 @@ function importBans() {
 	$("#loading_msg").html('Importing new bans from servers.');
 	$("#loading_div").slideDown('fast').show();
 	$("#loadingicon").show();
+	var banLIST = $("#banlist").attr("banlistid");
 	$.ajax ({
 		type: "GET",
 		url: 'bans/import_bans.php',
+		data: 'banlist='+banLIST,
 		success: function(response) {
 				$("#done_msg span").html(response);
 				$("#loadingicon").hide();
@@ -39,9 +41,11 @@ function exportBans() {
 	$("#loading_msg").html('Exporting bans DB to live server.');
 	$("#loading_div").slideDown('fast').show();
 	$("#loadingicon").show();
+	var banLIST = $("#banlist").attr("banlistid");
 	$.ajax ({
 		type: "GET",
 		url: 'bans/export_bans.php',
+		data: 'banlist='+banLIST,
 		success: function(response) {
 				$("#done_msg span").html(response);
 				$("#loadingicon").hide();
@@ -62,6 +66,7 @@ function addBan() {
 	var banGUIDIP = $("input[name=addban]").val();
 	var banLENGTH = $("select[name=banlength]").val();
 	var banREASON = $("input[name=reason]").val();
+	var banLIST = $("#banlist").attr("banlistid");
 	
 	if (banGUIDIP.length < 5) {
 		alert('GUID/IP is too short');
@@ -71,10 +76,10 @@ function addBan() {
 		alert('Ban reason is too long.  Max 64chars');
 	} else if (banGUIDIP.search(/^[a-f0-9\.]+$/) != 0) {
 		alert('Invalid character(s) in GUID/IP');
-	} else if (banREASON.search(/^[a-zA-Z0-9 \.,\-!\?\(\)\[\]\{\}\+/]+$/) != 0) {
+	} else if (banREASON.search(/^[a-zA-Z0-9 \.,\-!\?\(\)\[\]\{\}\+\#\//]+$/) != 0) {
 		alert('Invalid character(s) in ban reason');
 	} else {
-		var postData = 'addban='+banGUIDIP+'&banlength='+banLENGTH+'&reason='+banREASON;
+		var postData = 'addban='+banGUIDIP+'&banlength='+banLENGTH+'&reason='+banREASON+'&banlist='+banLIST;
 		$.ajax ({
 			type: "POST",
 			url: 'modules/getbans.php',
@@ -95,6 +100,7 @@ function addBan() {
 
 function unBan() {
 	var toUnban = [];
+	var banLIST = $("#banlist").attr("banlistid");
 	$("input[name='delban[]']:checked").each(function() {
 		toUnban.push($(this).val());
 	});
@@ -103,7 +109,7 @@ function unBan() {
 		$.ajax ({
 			type: "POST",
 			url: 'modules/getbans.php',
-			data: { delban : toUnban },
+			data: { delban : toUnban, banlist : banLIST },
 			success: function(response) {
 					$("#popup_msg").html(response);
 					$("#popup_msg").slideDown('fast').show();
@@ -135,7 +141,8 @@ function searchBans(type,searchTerm) {
 	$('#searching_for').html(' Searching for: ' + searchTerm);
 	$('#search_box').val(searchTerm);
 	$('#search_type').val('guidip');
-	var postData = 'type=guidip&search='+searchTerm;
+	var banLIST = $("#banlist").attr("banlistid");
+	var postData = 'type=guidip&search='+searchTerm+'&banlist='+banLIST;
 	$.ajax ({
 		type: "POST",
 		url: 'modules/getbans.php',
@@ -148,6 +155,7 @@ function searchBans(type,searchTerm) {
 }
 
 function fetchDBRows(db,searchType,searchTerm,page) {
+	var banLIST = $("#banlist").attr("banlistid");
 	if (searchType == 'none') {
 		$('#searching_for').html('');
 		var postData = 'page='+page;
@@ -157,6 +165,7 @@ function fetchDBRows(db,searchType,searchTerm,page) {
 		$('#search_type').val(searchType);
 		var postData = 'type='+searchType+'&search='+searchTerm+'&page='+page;
 	}
+	postData += '&banlist='+banLIST;
 	$.ajax ({
 		type: "POST",
 		url: 'modules/get'+db+'.php',

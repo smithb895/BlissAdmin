@@ -21,21 +21,27 @@ include_once("/../modules/bans_connect.php");
 
 
 // Set pathname of bans.txt
-$bansFile = $localbansfile;
+if (isset($_GET['banlist'])) {
+	$banlist = preg_replace('#[^0-9]#', '', $_GET['banlist']);
+} else {
+	$banlist = 0;
+}
+$bansFile = $banlists[$banlist];
+$banTableName = '`'.strtolower($banlistnames[$banlist]).'`';
 
 // Load file into an array, each line is element
 $bansArray = file($bansFile);
 
 //  Prepare SQL statement
-$qryCount = $dbhandle3->query('SELECT count(`ID`) FROM `bans`');
+$qryCount = $dbhandle3->query('SELECT count(`ID`) FROM '.$banTableName);
 //$qryCount->execute();
 $totalBans = $qryCount->fetchColumn();
 
-$qry = $dbhandle3->prepare('INSERT INTO `bans` (`ID`, `GUID_IP`, `LENGTH`, `REASON`, `ADMIN`, `DATE_TIME`) VALUES (:id, :guid_ip, :length, :reason, :admin, CURRENT_TIMESTAMP())');
-$qryReban = $dbhandle3->prepare('UPDATE `bans` SET `ACTIVE`=1 WHERE `ID`=? LIMIT 1');
-$qryUnban = $dbhandle3->prepare('UPDATE `bans` SET `ACTIVE`=0 WHERE `ID`=? LIMIT 1');
-$queryCheckExisting = $dbhandle3->prepare('SELECT * FROM `bans` WHERE `GUID_IP` LIKE ? AND `ACTIVE`=0');
-$queryActiveBansDB = $dbhandle3->prepare('SELECT * FROM `bans` WHERE `ACTIVE`=1');
+$qry = $dbhandle3->prepare('INSERT INTO '.$banTableName.' (`ID`, `GUID_IP`, `LENGTH`, `REASON`, `ADMIN`, `DATE_TIME`) VALUES (:id, :guid_ip, :length, :reason, :admin, CURRENT_TIMESTAMP())');
+$qryReban = $dbhandle3->prepare('UPDATE '.$banTableName.' SET `ACTIVE`=1 WHERE `ID`=? LIMIT 1');
+$qryUnban = $dbhandle3->prepare('UPDATE '.$banTableName.' SET `ACTIVE`=0 WHERE `ID`=? LIMIT 1');
+$queryCheckExisting = $dbhandle3->prepare('SELECT * FROM '.$banTableName.' WHERE `GUID_IP` LIKE ? AND `ACTIVE`=0');
+$queryActiveBansDB = $dbhandle3->prepare('SELECT * FROM '.$banTableName.' WHERE `ACTIVE`=1');
 $queryActiveBansDB->execute();
 
 
