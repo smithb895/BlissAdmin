@@ -20,10 +20,10 @@ if (isset($_GET['logout']))
 {
 	require_once('/modules/login_connect.php');
 	$query = $dbhandle2->prepare("INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('LOGOUT',?,NOW())");
-	$query->execute(array($_SESSION['user_id']));
+	$query->execute(array($_SESSION['login']));
 	
-	if (isset($_SESSION['user_id']))
-		unset($_SESSION['user_id']);
+	if (isset($_SESSION['login']))
+		unset($_SESSION['login']);
 		
 	setcookie('login', '', 0, "/");
 	setcookie('password', '', 0, "/");
@@ -31,7 +31,7 @@ if (isset($_GET['logout']))
 	exit;
 }
 
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {
 	require_once('/modules/hive_connect.php');
 	require_once('/modules/login_connect.php');

@@ -1,5 +1,5 @@
 <?php
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['login'])) {
 	if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 4)) {
 		?>
 		<script type="text/javascript">
@@ -140,8 +140,8 @@ if (isset($_SESSION['user_id'])) {
 		var map = TavianaMap._map;
 		map.clearMarkers();
 		for (i = 0; i < markers.length; i++) { 
-			var lng = ((markers[i][2]/240) - pixelOrigin_.x) / pixelsPerLonDegree_;
-			var latRadians = (((markers[i][3])/56) - pixelOrigin_.y) / pixelsPerLonRadian_;
+			var lng = ((markers[i][2]/60) - pixelOrigin_.x) / pixelsPerLonDegree_;
+			var latRadians = (((markers[i][3])/60) - pixelOrigin_.y) / pixelsPerLonRadian_;
 			var lat = radiansToDegrees(2 * Math.atan(Math.exp(latRadians)) - Math.PI / 2);
 						
 			marker = new google.maps.Marker({

@@ -1,5 +1,5 @@
 <?php
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">

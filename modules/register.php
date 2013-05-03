@@ -1,5 +1,5 @@
 <?php
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {
 	if ($_SESSION['tier'] == 1) {
 		/*
@@ -166,7 +166,7 @@ if (isset($_SESSION['user_id']))
 					$errort .= 'Login already used.<br />';
 				}
 			}
-			if (preg_match('#[^0-9a-z_\-@()\.,~\!\+\$+]#i', $password)) {
+			if (preg_match('#[^0-9a-z_\-@()\.,~\!\+\$#+]#i', $password)) {
 				$error = true;
 				$errort .= 'Invalid character in password.<br />';
 			}

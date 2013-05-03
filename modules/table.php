@@ -1,7 +1,7 @@
 <?php
 include_once('config.php');
 include_once('/modules/functions.php');
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {	
 	$pnumber = 0;
 	$tableheader = '';

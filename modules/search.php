@@ -2,7 +2,7 @@
 //error_reporting(E_ALL);
 //ini_set('display_errors',1);
 
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {
 	if (isset($_POST['type'])){
 		if (preg_match('#[^0-9a-z+]#i', $_POST['type'])) {

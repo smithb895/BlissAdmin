@@ -1,5 +1,5 @@
 <?php
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {
 	switch($_GET['show']) {
 	case 0:

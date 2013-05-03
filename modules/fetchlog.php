@@ -5,7 +5,6 @@
 require('../session.php');
 require('../config.php');
 // $localserverlog <- server_console.log
-// $localbansfile  <- bans.txt
 //$localserverlog = 'C:\www\hive_admin\logs\server_console.log';
 
 

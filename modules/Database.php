@@ -1,5 +1,5 @@
 <?php
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {
 	if ($_SESSION['tier'] < 3) {
 		$pagetitle = "Database Admin (Under Construction)";

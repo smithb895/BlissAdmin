@@ -1,5 +1,5 @@
 <?php
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {
 	$pagetitle = "Add item";
 	//$query = "INSERT INTO `logs`(`action`, `user`, `timestamp`) VALUES ('MANAGE VIPS','{$_SESSION['login']}',NOW())";

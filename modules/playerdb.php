@@ -1,7 +1,7 @@
 <?php
 //error_reporting(E_ALL);
 //ini_set('display_errors',1);
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['login'])) {
 	include_once('config.php');
 	//include_once('hive_connect.php');
 	include_once('modules/login_connect.php');

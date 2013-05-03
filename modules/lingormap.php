@@ -1,5 +1,5 @@
 <?php
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['login'])) {
 	if ((!isset($_SESSION['tier'])) || ($_SESSION['tier'] > 4)) {
 		?>
 		<script type="text/javascript">
