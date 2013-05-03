@@ -4,7 +4,7 @@
 
 include_once('config.php');
 
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['login'])) {
 	if (isset($_GET['instance'])) {
 		if (preg_match('#[^0-9+]#', $_GET['instance'])) {
 			die("Invalid instance number");
@@ -152,6 +152,8 @@ if (isset($_SESSION['user_id'])) {
 							';
 						}
 					?>
+					</ul>
+				</li>
 					<!--
 						<li class="li-user-manager parent"><a href="#nogo" class="class:user daddy item">Instance ID:<?php echo $iid?></a>
 							<ul class="level3 parent-user-manager">
@@ -188,8 +190,19 @@ if (isset($_SESSION['user_id'])) {
 						
 				</li>-->
 				
-				</ul>
-				<li class="li-dashboard root active"><a href="admin.php?view=bansdb" style="color:#FFF;" class="dashboard item">Bans</a></li>
+				<li class="li-users parent root"><span class=" daddy item"><span>Bans</span></span>
+					<ul class="level2 parent-users">
+					<?php
+						//foreach ($banlists as $list) {
+						for ($i=0; $i<count($banlists); $i++) {
+							echo '
+								<li class="li-mass-mail-users"><a href="admin.php?view=bansdb&banlist='.$i.'" class="class:massmail item">'.$banlistnames[$i].'</a></li>
+							';
+						}
+					?>
+					</ul>
+				</li>
+				<!--<li class="li-dashboard root active"><a href="admin.php?view=bansdb" style="color:#FFF;" class="dashboard item">Bans</a></li>-->
 				<li class="li-dashboard root active"><a href="admin.php?view=playerdb" style="color:#FFF;" class="dashboard item">Player DB</a></li>
 				<div class="clear"></div>
 			</div>
