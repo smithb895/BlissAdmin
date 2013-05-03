@@ -3,7 +3,7 @@
 //ini_set('display_errors',1);
 //include_once('/config.php');
 
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {
 require_once('/modules/hive_connect.php');
 require_once('/modules/login_connect.php');
@@ -127,7 +127,9 @@ $query->execute(array($_SESSION['login']));
 				//$items_xml_lowercase = array_change_key_case($items_xml['items'], CASE_LOWER);
 				if(!array_key_exists('s'.strtolower($curitem),$items_xml['items'])){
 				//if (! (in_array(strtolower($curitem), array_map('strtolower', array_keys($items_xml['items']))))) {
-					$Unknown[] = $curitem;
+					if ($curitem != "") {
+						$Unknown[] = $curitem;
+					}
 				}
 				/*$item_names = array_keys($items_xml['items']);
 				foreach ($item_names as $oneitem) {
