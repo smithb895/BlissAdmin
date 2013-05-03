@@ -9,6 +9,11 @@ $sitename = "-={AWG}=- DayZ Administration"; 			// Admin panel name
 $siteForums = "AnzusWarGames.info/forums";				// URL for forums
 $localserverlog = 'C:\path\to\logs\server_console.log';	// Full pathname for server_console.log file (OPTIONAL)
 $localbansfile = 'C:\path\to\bans\bans.txt';			// Full pathname for BattlEye bans.txt (OPTIONAL)
+$localbansfile2 = 'C:\path\to\bans\bans2.txt';			// Second, separate bans.txt for ArmA 2 servers (OPTIONAL)
+
+// Ban lists array
+$banlists = array($localbansfile,$localbansfile2); 	// Add all local bans file variables above to this array
+$banlistnames = array('DayZ','ArmA2');				// Names of the banlists, for example DayZ and ArmA2 banlists
 
 // Test Bug Fix?
 $path = '';
