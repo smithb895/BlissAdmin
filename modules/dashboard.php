@@ -1,5 +1,5 @@
 <?php
-if (isset($_SESSION['user_id']))
+if (isset($_SESSION['login']))
 {
 
 //ini_set( "display_errors", 0);
@@ -49,7 +49,7 @@ while ($row = $queryAdminLog->fetch(PDO::FETCH_ASSOC)) {
 		<span id="loadingicon"><img src="images\icons\gifs\ajax-loader.gif"/></span>
 		<br />
 		<br />
-		<h2>Current Players - <?php echo '<span id="servername">'.$DayZ_Servers[0]->getServerName().'</span> - <span id="servermap">'.$DayZ_Servers[0]->getServerMap().'</span>'; ?></h2>
+		<!--<h2>Current Players - <?php //echo '<span id="servername">'.$DayZ_Servers[0]->getServerName().'</span> - <span id="servermap">'.$DayZ_Servers[0]->getServerMap().'</span>'; ?></h2>-->
 		<!--<div id="current-players">-->
 		<div id="table-content">
 			<!--<table id="player_data_table">-->
